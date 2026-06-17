@@ -4,16 +4,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tecsup.devtrack.model.Proyecto
+import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 
 @Composable
-fun ProyectoScreen() {
-    var nombre by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var proyectos by remember { mutableStateOf(listOf<Proyecto>()) }
+fun ProyectoScreen(
+    viewModel: ProyectoViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -28,8 +30,8 @@ fun ProyectoScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
+            value = uiState.nombre,
+            onValueChange = { viewModel.actualizarNombre(it) },
             label = { Text("Nombre del proyecto") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -37,8 +39,8 @@ fun ProyectoScreen() {
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = descripcion,
-            onValueChange = { descripcion = it },
+            value = uiState.descripcion,
+            onValueChange = { viewModel.actualizarDescripcion(it) },
             label = { Text("Descripción") },
             modifier = Modifier.fillMaxWidth()
         )
@@ -46,22 +48,7 @@ fun ProyectoScreen() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = {
-                if (nombre.isNotBlank() && descripcion.isNotBlank()) {
-                    proyectos = proyectos + Proyecto(
-                        id = proyectos.size + 1,
-                        nombre = nombre,
-                        descripcion = descripcion,
-                        tecnologias = "Kotlin",
-                        estado = "En desarrollo",
-                        fechaInicio = "2026-01-01",
-                        fechaLimite = "2026-12-31",
-                        observaciones = "Proyecto registrado en DevTrack"
-                    )
-                    nombre = ""
-                    descripcion = ""
-                }
-            },
+            onClick = { viewModel.guardarProyecto() },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Guardar proyecto")
@@ -75,7 +62,7 @@ fun ProyectoScreen() {
         )
 
         LazyColumn {
-            items(proyectos) { proyecto ->
+            items(uiState.proyectos) { proyecto ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
