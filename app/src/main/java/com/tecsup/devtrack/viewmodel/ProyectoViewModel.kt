@@ -54,4 +54,14 @@ class ProyectoViewModel : ViewModel() {
             )
         }
     }
+
+    fun eliminarProyecto(proyecto: Proyecto) {
+        repository.eliminarProyecto(proyecto)
+
+        _uiState.update {
+            it.copy(
+                proyectos = repository.obtenerProyectos()
+            )
+        }
+    }
 }

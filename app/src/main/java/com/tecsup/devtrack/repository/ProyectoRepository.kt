@@ -13,4 +13,8 @@ class ProyectoRepository {
     fun guardarProyecto(proyecto: Proyecto) {
         proyectos.add(proyecto)
     }
+
+    fun eliminarProyecto(proyecto: Proyecto) {
+        proyectos.remove(proyecto)
+    }
 }

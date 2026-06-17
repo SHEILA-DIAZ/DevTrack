@@ -61,6 +61,8 @@ fun ProyectoScreen(
             style = MaterialTheme.typography.titleLarge
         )
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         LazyColumn {
             items(uiState.proyectos) { proyecto ->
                 Card(
@@ -68,10 +70,22 @@ fun ProyectoScreen(
                         .fillMaxWidth()
                         .padding(vertical = 6.dp)
                 ) {
-                    Column(modifier = Modifier.padding(12.dp)) {
+                    Column(
+                        modifier = Modifier.padding(12.dp)
+                    ) {
                         Text(text = proyecto.nombre)
                         Text(text = proyecto.descripcion)
                         Text(text = proyecto.estado)
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = {
+                                viewModel.eliminarProyecto(proyecto)
+                            }
+                        ) {
+                            Text("Eliminar")
+                        }
                     }
                 }
             }
