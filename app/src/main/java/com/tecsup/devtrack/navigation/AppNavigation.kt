@@ -32,7 +32,8 @@ fun AppNavigation(
         factory = tareaFactory
     )
 
-    val uiState by proyectoViewModel.uiState.collectAsState()
+    val proyectoUiState by proyectoViewModel.uiState.collectAsState()
+    val tareaUiState by tareaViewModel.uiState.collectAsState()
 
     NavHost(
         navController = navController,
@@ -40,7 +41,8 @@ fun AppNavigation(
     ) {
         composable(Routes.DASHBOARD) {
             DashboardScreen(
-                proyectos = uiState.proyectos,
+                proyectos = proyectoUiState.proyectos,
+                tareas = tareaUiState.tareas,
                 onIrProyectos = {
                     navController.navigate(Routes.PROYECTOS)
                 }

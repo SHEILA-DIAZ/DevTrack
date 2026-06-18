@@ -18,6 +18,20 @@ class TareaViewModel(
     private val _uiState = MutableStateFlow(TareaUiState())
     val uiState: StateFlow<TareaUiState> = _uiState
 
+    init {
+        cargarTodasLasTareas()
+    }
+
+    private fun cargarTodasLasTareas() {
+        viewModelScope.launch {
+            repository.obtenerTareas().collect { tareas ->
+                _uiState.update {
+                    it.copy(tareas = tareas)
+                }
+            }
+        }
+    }
+
     fun cargarTareasPorProyecto(proyectoId: Int) {
         _uiState.update {
             it.copy(proyectoId = proyectoId)

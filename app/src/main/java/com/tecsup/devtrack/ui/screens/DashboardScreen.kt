@@ -1,25 +1,35 @@
 package com.tecsup.devtrack.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.devtrack.model.Proyecto
+import com.tecsup.devtrack.model.Tarea
 
 @Composable
 fun DashboardScreen(
     proyectos: List<Proyecto>,
+    tareas: List<Tarea>,
     onIrProyectos: () -> Unit
 ) {
-    val total = proyectos.size
+    val totalProyectos = proyectos.size
     val enDesarrollo = proyectos.count { it.estado == "En desarrollo" }
     val finalizados = proyectos.count { it.estado == "Finalizado" }
     val planificados = proyectos.count { it.estado == "Planificado" }
 
+    val totalTareas = tareas.size
+    val pendientes = tareas.count { it.estado == "Pendiente" }
+    val enProceso = tareas.count { it.estado == "En proceso" }
+    val completadas = tareas.count { it.estado == "Completada" }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
         Text("DevTrack", style = MaterialTheme.typography.headlineMedium)
@@ -31,10 +41,27 @@ fun DashboardScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        EstadisticaCard("Total de proyectos", total.toString())
+        Text(
+            text = "Resumen de proyectos",
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        EstadisticaCard("Total de proyectos", totalProyectos.toString())
         EstadisticaCard("En desarrollo", enDesarrollo.toString())
         EstadisticaCard("Finalizados", finalizados.toString())
         EstadisticaCard("Planificados", planificados.toString())
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Resumen de tareas",
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        EstadisticaCard("Total de tareas", totalTareas.toString())
+        EstadisticaCard("Pendientes", pendientes.toString())
+        EstadisticaCard("En proceso", enProceso.toString())
+        EstadisticaCard("Completadas", completadas.toString())
 
         Spacer(modifier = Modifier.height(24.dp))
 
