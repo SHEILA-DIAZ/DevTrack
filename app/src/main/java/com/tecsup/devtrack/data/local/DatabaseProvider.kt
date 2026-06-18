@@ -10,11 +10,14 @@ object DatabaseProvider {
 
     fun getDatabase(context: Context): ProyectoDatabase {
         return database ?: synchronized(this) {
+
             val instance = Room.databaseBuilder(
                 context.applicationContext,
                 ProyectoDatabase::class.java,
                 "devtrack_database"
-            ).build()
+            )
+                .fallbackToDestructiveMigration(true)
+                .build()
 
             database = instance
             instance

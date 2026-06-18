@@ -22,12 +22,7 @@ fun DashboardScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "DevTrack",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Text("DevTrack", style = MaterialTheme.typography.headlineMedium)
 
         Text(
             text = "Gestión de proyectos tecnológicos",
@@ -36,10 +31,10 @@ fun DashboardScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text("Total de proyectos: $total")
-        Text("En desarrollo: $enDesarrollo")
-        Text("Finalizados: $finalizados")
-        Text("Planificados: $planificados")
+        EstadisticaCard("Total de proyectos", total.toString())
+        EstadisticaCard("En desarrollo", enDesarrollo.toString())
+        EstadisticaCard("Finalizados", finalizados.toString())
+        EstadisticaCard("Planificados", planificados.toString())
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -48,6 +43,32 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ver proyectos")
+        }
+    }
+}
+
+@Composable
+fun EstadisticaCard(
+    titulo: String,
+    valor: String
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = titulo,
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                text = valor,
+                style = MaterialTheme.typography.headlineSmall
+            )
         }
     }
 }

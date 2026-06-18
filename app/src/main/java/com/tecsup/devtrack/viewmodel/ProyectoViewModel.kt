@@ -44,6 +44,12 @@ class ProyectoViewModel(
         }
     }
 
+    fun actualizarEstado(estado: String) {
+        _uiState.update {
+            it.copy(estado = estado)
+        }
+    }
+
     fun guardarProyecto() {
         val estadoActual = _uiState.value
 
@@ -61,7 +67,7 @@ class ProyectoViewModel(
                 nombre = estadoActual.nombre,
                 descripcion = estadoActual.descripcion,
                 tecnologias = "Kotlin",
-                estado = "En desarrollo",
+                estado = estadoActual.estado,
                 fechaInicio = "2026-01-01",
                 fechaLimite = "2026-12-31",
                 observaciones = "Proyecto registrado en DevTrack"
@@ -72,7 +78,8 @@ class ProyectoViewModel(
             _uiState.update {
                 it.copy(
                     nombre = "",
-                    descripcion = ""
+                    descripcion = "",
+                    estado = "Planificado"
                 )
             }
         }
@@ -84,7 +91,8 @@ class ProyectoViewModel(
         _uiState.update {
             it.copy(
                 nombre = proyecto.nombre,
-                descripcion = proyecto.descripcion
+                descripcion = proyecto.descripcion,
+                estado = proyecto.estado
             )
         }
     }
@@ -94,7 +102,8 @@ class ProyectoViewModel(
 
         val proyectoActualizado = proyecto.copy(
             nombre = _uiState.value.nombre,
-            descripcion = _uiState.value.descripcion
+            descripcion = _uiState.value.descripcion,
+            estado = _uiState.value.estado
         )
 
         repository.actualizarProyecto(proyectoActualizado)
@@ -102,7 +111,8 @@ class ProyectoViewModel(
         _uiState.update {
             it.copy(
                 nombre = "",
-                descripcion = ""
+                descripcion = "",
+                estado = "Planificado"
             )
         }
 

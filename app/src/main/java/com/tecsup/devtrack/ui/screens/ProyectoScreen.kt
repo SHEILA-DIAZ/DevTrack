@@ -4,19 +4,26 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProyectoScreen(
     viewModel: ProyectoViewModel,
     onVolver: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    var menuExpandido by remember { mutableStateOf(false) }
+
+    val estados = listOf(
+        "Planificado",
+        "En desarrollo",
+        "Finalizado"
+    )
 
     Column(
         modifier = Modifier
@@ -54,6 +61,42 @@ fun ProyectoScreen(
             label = { Text("Descripción") },
             modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        ExposedDropdownMenuBox(
+            expanded = menuExpandido,
+            onExpandedChange = {
+                menuExpandido = !menuExpandido
+            }
+        ) {
+            OutlinedTextField(
+                value = uiState.estado,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Estado del proyecto") },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(
+                expanded = menuExpandido,
+                onDismissRequest = {
+                    menuExpandido = false
+                }
+            ) {
+                estados.forEach { estado ->
+                    DropdownMenuItem(
+                        text = { Text(estado) },
+                        onClick = {
+                            viewModel.actualizarEstado(estado)
+                            menuExpandido = false
+                        }
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
