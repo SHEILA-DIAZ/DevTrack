@@ -11,6 +11,8 @@ class ProyectoViewModel : ViewModel() {
 
     private val repository = ProyectoRepository()
 
+    private var proyectoEditando: Proyecto? = null
+
     private val _uiState = MutableStateFlow(ProyectoUiState())
     val uiState: StateFlow<ProyectoUiState> = _uiState
 
@@ -30,6 +32,11 @@ class ProyectoViewModel : ViewModel() {
         val estadoActual = _uiState.value
 
         if (estadoActual.nombre.isBlank() || estadoActual.descripcion.isBlank()) {
+            return
+        }
+
+        if (proyectoEditando != null) {
+            actualizarProyecto()
             return
         }
 
@@ -53,6 +60,38 @@ class ProyectoViewModel : ViewModel() {
                 descripcion = ""
             )
         }
+    }
+
+    fun seleccionarProyecto(proyecto: Proyecto) {
+        proyectoEditando = proyecto
+
+        _uiState.update {
+            it.copy(
+                nombre = proyecto.nombre,
+                descripcion = proyecto.descripcion
+            )
+        }
+    }
+
+    private fun actualizarProyecto() {
+        val proyecto = proyectoEditando ?: return
+
+        val proyectoActualizado = proyecto.copy(
+            nombre = _uiState.value.nombre,
+            descripcion = _uiState.value.descripcion
+        )
+
+        repository.actualizarProyecto(proyectoActualizado)
+
+        _uiState.update {
+            it.copy(
+                proyectos = repository.obtenerProyectos(),
+                nombre = "",
+                descripcion = ""
+            )
+        }
+
+        proyectoEditando = null
     }
 
     fun eliminarProyecto(proyecto: Proyecto) {

@@ -17,4 +17,12 @@ class ProyectoRepository {
     fun eliminarProyecto(proyecto: Proyecto) {
         proyectos.remove(proyecto)
     }
+
+    fun actualizarProyecto(proyectoActualizado: Proyecto) {
+        val index = proyectos.indexOfFirst { it.id == proyectoActualizado.id }
+
+        if (index != -1) {
+            proyectos[index] = proyectoActualizado
+        }
+    }
 }

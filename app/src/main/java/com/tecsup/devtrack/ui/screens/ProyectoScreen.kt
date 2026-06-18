@@ -79,12 +79,25 @@ fun ProyectoScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(
-                            onClick = {
-                                viewModel.eliminarProyecto(proyecto)
-                            }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text("Eliminar")
+                            Button(
+                                onClick = {
+                                    viewModel.seleccionarProyecto(proyecto)
+                                }
+                            ) {
+                                Text("Editar")
+                            }
+
+                            Button(
+                                onClick = {
+                                    viewModel.eliminarProyecto(proyecto)
+                                }
+                            ) {
+                                Text("Eliminar")
+                            }
                         }
                     }
                 }
