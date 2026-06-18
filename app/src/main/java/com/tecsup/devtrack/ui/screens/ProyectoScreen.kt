@@ -13,7 +13,8 @@ import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 
 @Composable
 fun ProyectoScreen(
-    viewModel: ProyectoViewModel
+    viewModel: ProyectoViewModel,
+    onVolver: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -26,6 +27,15 @@ fun ProyectoScreen(
             text = "DevTrack",
             style = MaterialTheme.typography.headlineMedium
         )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = onVolver,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Volver al Dashboard")
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 

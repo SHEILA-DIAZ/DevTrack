@@ -34,7 +34,10 @@ fun AppNavigation(
 
         composable(Routes.PROYECTOS) {
             ProyectoScreen(
-                viewModel = proyectoViewModel
+                viewModel = proyectoViewModel,
+                onVolver = {
+                    navController.popBackStack()
+                }
             )
         }
     }
