@@ -7,24 +7,28 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.tecsup.devtrack.viewmodel.ProyectoViewModel
+import com.tecsup.devtrack.viewmodel.TareaViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProyectoScreen(
-    viewModel: ProyectoViewModel,
-    onVolver: () -> Unit,
-    onVerTareas: (Int) -> Unit
+fun TareaScreen(
+    viewModel: TareaViewModel,
+    proyectoId: Int,
+    onVolver: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     var menuExpandido by remember { mutableStateOf(false) }
 
     val estados = listOf(
-        "Planificado",
-        "En desarrollo",
-        "Finalizado"
+        "Pendiente",
+        "En proceso",
+        "Completada"
     )
+
+    LaunchedEffect(proyectoId) {
+        viewModel.cargarTareasPorProyecto(proyectoId)
+    }
 
     Column(
         modifier = Modifier
@@ -32,7 +36,7 @@ fun ProyectoScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = "DevTrack",
+            text = "Tareas del proyecto",
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -42,7 +46,7 @@ fun ProyectoScreen(
             onClick = onVolver,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Volver al Dashboard")
+            Text("Volver a proyectos")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -50,7 +54,7 @@ fun ProyectoScreen(
         OutlinedTextField(
             value = uiState.nombre,
             onValueChange = { viewModel.actualizarNombre(it) },
-            label = { Text("Nombre del proyecto") },
+            label = { Text("Nombre de la tarea") },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -75,7 +79,7 @@ fun ProyectoScreen(
                 value = uiState.estado,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Estado del proyecto") },
+                label = { Text("Estado de la tarea") },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
@@ -102,23 +106,23 @@ fun ProyectoScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = { viewModel.guardarProyecto() },
+            onClick = { viewModel.guardarTarea() },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Guardar proyecto")
+            Text("Guardar tarea")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Lista de proyectos",
+            text = "Lista de tareas",
             style = MaterialTheme.typography.titleLarge
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn {
-            items(uiState.proyectos) { proyecto ->
+            items(uiState.tareas) { tarea ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -127,20 +131,9 @@ fun ProyectoScreen(
                     Column(
                         modifier = Modifier.padding(12.dp)
                     ) {
-                        Text(text = proyecto.nombre)
-                        Text(text = proyecto.descripcion)
-                        Text(text = proyecto.estado)
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Button(
-                            onClick = {
-                                onVerTareas(proyecto.id)
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Ver tareas")
-                        }
+                        Text(text = tarea.nombre)
+                        Text(text = tarea.descripcion)
+                        Text(text = tarea.estado)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -150,7 +143,7 @@ fun ProyectoScreen(
                         ) {
                             Button(
                                 onClick = {
-                                    viewModel.seleccionarProyecto(proyecto)
+                                    viewModel.seleccionarTarea(tarea)
                                 }
                             ) {
                                 Text("Editar")
@@ -158,7 +151,7 @@ fun ProyectoScreen(
 
                             Button(
                                 onClick = {
-                                    viewModel.eliminarProyecto(proyecto)
+                                    viewModel.eliminarTarea(tarea)
                                 }
                             ) {
                                 Text("Eliminar")
