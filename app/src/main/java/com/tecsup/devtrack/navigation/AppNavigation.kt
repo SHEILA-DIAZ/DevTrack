@@ -1,6 +1,8 @@
 package com.tecsup.devtrack.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,12 +22,15 @@ fun AppNavigation(
         factory = factory
     )
 
+    val uiState by proyectoViewModel.uiState.collectAsState()
+
     NavHost(
         navController = navController,
         startDestination = Routes.DASHBOARD
     ) {
         composable(Routes.DASHBOARD) {
             DashboardScreen(
+                proyectos = uiState.proyectos,
                 onIrProyectos = {
                     navController.navigate(Routes.PROYECTOS)
                 }
