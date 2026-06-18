@@ -34,13 +34,13 @@ class ProyectoViewModel(
 
     fun actualizarNombre(nombre: String) {
         _uiState.update {
-            it.copy(nombre = nombre)
+            it.copy(nombre = nombre, mensajeError = "")
         }
     }
 
     fun actualizarDescripcion(descripcion: String) {
         _uiState.update {
-            it.copy(descripcion = descripcion)
+            it.copy(descripcion = descripcion, mensajeError = "")
         }
     }
 
@@ -54,6 +54,9 @@ class ProyectoViewModel(
         val estadoActual = _uiState.value
 
         if (estadoActual.nombre.isBlank() || estadoActual.descripcion.isBlank()) {
+            _uiState.update {
+                it.copy(mensajeError = "Complete todos los campos")
+            }
             return
         }
 
@@ -79,7 +82,8 @@ class ProyectoViewModel(
                 it.copy(
                     nombre = "",
                     descripcion = "",
-                    estado = "Planificado"
+                    estado = "Planificado",
+                    mensajeError = ""
                 )
             }
         }
@@ -92,7 +96,8 @@ class ProyectoViewModel(
             it.copy(
                 nombre = proyecto.nombre,
                 descripcion = proyecto.descripcion,
-                estado = proyecto.estado
+                estado = proyecto.estado,
+                mensajeError = ""
             )
         }
     }
@@ -112,7 +117,8 @@ class ProyectoViewModel(
             it.copy(
                 nombre = "",
                 descripcion = "",
-                estado = "Planificado"
+                estado = "Planificado",
+                mensajeError = ""
             )
         }
 

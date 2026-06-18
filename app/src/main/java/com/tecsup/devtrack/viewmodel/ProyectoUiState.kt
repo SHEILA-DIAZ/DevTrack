@@ -8,5 +8,8 @@ data class ProyectoUiState(
     val descripcion: String = "",
 
     // Estado seleccionado en el formulario
-    val estado: String = "Planificado"
+    val estado: String = "Planificado",
+
+    // Mensaje de validación
+    val mensajeError: String = ""
 )

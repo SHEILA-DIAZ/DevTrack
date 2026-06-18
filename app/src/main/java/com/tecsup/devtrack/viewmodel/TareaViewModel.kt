@@ -48,13 +48,13 @@ class TareaViewModel(
 
     fun actualizarNombre(nombre: String) {
         _uiState.update {
-            it.copy(nombre = nombre)
+            it.copy(nombre = nombre, mensajeError = "")
         }
     }
 
     fun actualizarDescripcion(descripcion: String) {
         _uiState.update {
-            it.copy(descripcion = descripcion)
+            it.copy(descripcion = descripcion, mensajeError = "")
         }
     }
 
@@ -68,6 +68,9 @@ class TareaViewModel(
         val estadoActual = _uiState.value
 
         if (estadoActual.nombre.isBlank() || estadoActual.descripcion.isBlank()) {
+            _uiState.update {
+                it.copy(mensajeError = "Complete todos los campos")
+            }
             return
         }
 
@@ -90,7 +93,8 @@ class TareaViewModel(
                 it.copy(
                     nombre = "",
                     descripcion = "",
-                    estado = "Pendiente"
+                    estado = "Pendiente",
+                    mensajeError = ""
                 )
             }
         }
@@ -103,7 +107,8 @@ class TareaViewModel(
             it.copy(
                 nombre = tarea.nombre,
                 descripcion = tarea.descripcion,
-                estado = tarea.estado
+                estado = tarea.estado,
+                mensajeError = ""
             )
         }
     }
@@ -123,7 +128,8 @@ class TareaViewModel(
             it.copy(
                 nombre = "",
                 descripcion = "",
-                estado = "Pendiente"
+                estado = "Pendiente",
+                mensajeError = ""
             )
         }
 

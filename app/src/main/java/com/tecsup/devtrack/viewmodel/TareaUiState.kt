@@ -7,5 +7,6 @@ data class TareaUiState(
     val nombre: String = "",
     val descripcion: String = "",
     val estado: String = "Pendiente",
-    val proyectoId: Int = 0
+    val proyectoId: Int = 0,
+    val mensajeError: String = ""
 )

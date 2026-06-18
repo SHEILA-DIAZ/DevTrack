@@ -51,7 +51,8 @@ fun ProyectoScreen(
             value = uiState.nombre,
             onValueChange = { viewModel.actualizarNombre(it) },
             label = { Text("Nombre del proyecto") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = uiState.mensajeError.isNotBlank() && uiState.nombre.isBlank()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -60,7 +61,8 @@ fun ProyectoScreen(
             value = uiState.descripcion,
             onValueChange = { viewModel.actualizarDescripcion(it) },
             label = { Text("Descripción") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = uiState.mensajeError.isNotBlank() && uiState.descripcion.isBlank()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -106,6 +108,15 @@ fun ProyectoScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Guardar proyecto")
+        }
+
+        if (uiState.mensajeError.isNotBlank()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = uiState.mensajeError,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
