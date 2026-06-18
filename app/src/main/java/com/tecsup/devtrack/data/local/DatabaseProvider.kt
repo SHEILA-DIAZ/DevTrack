@@ -1,0 +1,23 @@
+package com.tecsup.devtrack.data.local
+
+import android.content.Context
+import androidx.room.Room
+
+object DatabaseProvider {
+
+    @Volatile
+    private var database: ProyectoDatabase? = null
+
+    fun getDatabase(context: Context): ProyectoDatabase {
+        return database ?: synchronized(this) {
+            val instance = Room.databaseBuilder(
+                context.applicationContext,
+                ProyectoDatabase::class.java,
+                "devtrack_database"
+            ).build()
+
+            database = instance
+            instance
+        }
+    }
+}

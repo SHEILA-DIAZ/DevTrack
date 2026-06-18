@@ -1,28 +1,33 @@
 package com.tecsup.devtrack.repository
 
+import com.tecsup.devtrack.data.local.ProyectoDao
+import com.tecsup.devtrack.data.local.toEntity
+import com.tecsup.devtrack.data.local.toProyecto
 import com.tecsup.devtrack.model.Proyecto
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
-class ProyectoRepository {
+class ProyectoRepository(
+    private val proyectoDao: ProyectoDao
+) {
 
-    private val proyectos = mutableListOf<Proyecto>()
-
-    fun obtenerProyectos(): List<Proyecto> {
-        return proyectos
-    }
-
-    fun guardarProyecto(proyecto: Proyecto) {
-        proyectos.add(proyecto)
-    }
-
-    fun eliminarProyecto(proyecto: Proyecto) {
-        proyectos.remove(proyecto)
-    }
-
-    fun actualizarProyecto(proyectoActualizado: Proyecto) {
-        val index = proyectos.indexOfFirst { it.id == proyectoActualizado.id }
-
-        if (index != -1) {
-            proyectos[index] = proyectoActualizado
+    fun obtenerProyectos(): Flow<List<Proyecto>> {
+        return proyectoDao.obtenerProyectos().map { lista ->
+            lista.map { entity ->
+                entity.toProyecto()
+            }
         }
+    }
+
+    suspend fun guardarProyecto(proyecto: Proyecto) {
+        proyectoDao.guardarProyecto(proyecto.toEntity())
+    }
+
+    suspend fun actualizarProyecto(proyecto: Proyecto) {
+        proyectoDao.actualizarProyecto(proyecto.toEntity())
+    }
+
+    suspend fun eliminarProyecto(proyecto: Proyecto) {
+        proyectoDao.eliminarProyecto(proyecto.toEntity())
     }
 }

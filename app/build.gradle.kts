@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+
+    // KSP permite que Room genere código automáticamente
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -65,6 +68,16 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
 
     implementation(libs.androidx.compose.material3)
+
+    // ROOM
+    // Base de datos local para guardar proyectos en el dispositivo
+    implementation(libs.androidx.room.runtime)
+
+    // Extensiones Kotlin para usar Room con corrutinas y Flow
+    implementation(libs.androidx.room.ktx)
+
+    // Compilador de Room usando KSP
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
 

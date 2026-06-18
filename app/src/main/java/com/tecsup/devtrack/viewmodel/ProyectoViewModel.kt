@@ -1,20 +1,36 @@
 package com.tecsup.devtrack.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tecsup.devtrack.model.Proyecto
 import com.tecsup.devtrack.repository.ProyectoRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class ProyectoViewModel : ViewModel() {
-
-    private val repository = ProyectoRepository()
+class ProyectoViewModel(
+    private val repository: ProyectoRepository
+) : ViewModel() {
 
     private var proyectoEditando: Proyecto? = null
 
     private val _uiState = MutableStateFlow(ProyectoUiState())
     val uiState: StateFlow<ProyectoUiState> = _uiState
+
+    init {
+        cargarProyectos()
+    }
+
+    private fun cargarProyectos() {
+        viewModelScope.launch {
+            repository.obtenerProyectos().collect { proyectos ->
+                _uiState.update {
+                    it.copy(proyectos = proyectos)
+                }
+            }
+        }
+    }
 
     fun actualizarNombre(nombre: String) {
         _uiState.update {
@@ -35,30 +51,30 @@ class ProyectoViewModel : ViewModel() {
             return
         }
 
-        if (proyectoEditando != null) {
-            actualizarProyecto()
-            return
-        }
+        viewModelScope.launch {
+            if (proyectoEditando != null) {
+                actualizarProyecto()
+                return@launch
+            }
 
-        val nuevoProyecto = Proyecto(
-            id = repository.obtenerProyectos().size + 1,
-            nombre = estadoActual.nombre,
-            descripcion = estadoActual.descripcion,
-            tecnologias = "Kotlin",
-            estado = "En desarrollo",
-            fechaInicio = "2026-01-01",
-            fechaLimite = "2026-12-31",
-            observaciones = "Proyecto registrado en DevTrack"
-        )
-
-        repository.guardarProyecto(nuevoProyecto)
-
-        _uiState.update {
-            it.copy(
-                proyectos = repository.obtenerProyectos(),
-                nombre = "",
-                descripcion = ""
+            val nuevoProyecto = Proyecto(
+                nombre = estadoActual.nombre,
+                descripcion = estadoActual.descripcion,
+                tecnologias = "Kotlin",
+                estado = "En desarrollo",
+                fechaInicio = "2026-01-01",
+                fechaLimite = "2026-12-31",
+                observaciones = "Proyecto registrado en DevTrack"
             )
+
+            repository.guardarProyecto(nuevoProyecto)
+
+            _uiState.update {
+                it.copy(
+                    nombre = "",
+                    descripcion = ""
+                )
+            }
         }
     }
 
@@ -73,7 +89,7 @@ class ProyectoViewModel : ViewModel() {
         }
     }
 
-    private fun actualizarProyecto() {
+    private suspend fun actualizarProyecto() {
         val proyecto = proyectoEditando ?: return
 
         val proyectoActualizado = proyecto.copy(
@@ -85,7 +101,6 @@ class ProyectoViewModel : ViewModel() {
 
         _uiState.update {
             it.copy(
-                proyectos = repository.obtenerProyectos(),
                 nombre = "",
                 descripcion = ""
             )
@@ -95,12 +110,8 @@ class ProyectoViewModel : ViewModel() {
     }
 
     fun eliminarProyecto(proyecto: Proyecto) {
-        repository.eliminarProyecto(proyecto)
-
-        _uiState.update {
-            it.copy(
-                proyectos = repository.obtenerProyectos()
-            )
+        viewModelScope.launch {
+            repository.eliminarProyecto(proyecto)
         }
     }
 }
