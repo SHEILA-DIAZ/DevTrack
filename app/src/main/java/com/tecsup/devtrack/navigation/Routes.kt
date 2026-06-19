@@ -17,6 +17,10 @@ object Routes {
 
     const val RECURSOS = "recursos"
 
+    const val PERFIL = "perfil"
+
+    const val DETALLE_PROYECTO = "detalle_proyecto"
+
     const val TAREAS = "tareas/{proyectoId}"
 
     fun tareas(proyectoId: Int): String {

@@ -10,7 +10,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.devtrack.ui.screens.DashboardScreen
+import com.tecsup.devtrack.ui.screens.DetalleProyectoScreen
 import com.tecsup.devtrack.ui.screens.LoginScreen
+import com.tecsup.devtrack.ui.screens.PerfilScreen
 import com.tecsup.devtrack.ui.screens.ProyectoScreen
 import com.tecsup.devtrack.ui.screens.RecursosScreen
 import com.tecsup.devtrack.ui.screens.RegistroScreen
@@ -99,13 +101,18 @@ fun AppNavigation(
             DashboardScreen(
                 proyectos = proyectoUiState.proyectos,
                 tareas = tareaUiState.tareas,
-                onIrProyectos = {
-                    navController.navigate(Routes.PROYECTOS)
-                },
-                onIrRecursos = {
-                    navController.navigate(Routes.RECURSOS)
+                onNavegar = { ruta ->
+                    navController.navigate(ruta)
                 }
             )
+        }
+
+        composable(Routes.PERFIL) {
+            PerfilScreen(onVolver = { navController.popBackStack() })
+        }
+
+        composable(Routes.DETALLE_PROYECTO) {
+            DetalleProyectoScreen(onVolver = { navController.popBackStack() })
         }
 
         composable(Routes.RECURSOS) {
