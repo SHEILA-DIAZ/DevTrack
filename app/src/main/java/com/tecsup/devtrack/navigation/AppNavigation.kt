@@ -77,6 +77,11 @@ fun AppNavigation(
             RegistroScreen(
                 onVolver = {
                     navController.popBackStack()
+                },
+                onNavegarAlLogin = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.REGISTRO) { inclusive = true }
+                    }
                 }
             )
         }
