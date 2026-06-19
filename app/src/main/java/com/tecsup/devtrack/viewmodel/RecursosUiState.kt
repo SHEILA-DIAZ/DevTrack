@@ -7,5 +7,6 @@ data class RecursosUiState(
     val isLoading: Boolean = false,
     val frase: String = "",
     val autor: String = "",
+    val imageUrl: String = "",
     val error: String? = null
 )

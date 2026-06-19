@@ -77,6 +77,10 @@ dependencies {
     // Conversor de JSON a objetos Kotlin usando GSON
     implementation(libs.retrofit.converter.gson)
 
+    // COIL
+    // Librería para cargar imágenes remotas en Compose
+    implementation(libs.coil.compose)
+
     // ROOM
     // Base de datos local para guardar proyectos en el dispositivo
     implementation(libs.androidx.room.runtime)
