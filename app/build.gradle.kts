@@ -71,6 +71,12 @@ dependencies {
 
     implementation(libs.androidx.compose.material3)
 
+    // RETROFIT
+    // Librería para realizar peticiones HTTP a APIs REST
+    implementation(libs.retrofit)
+    // Conversor de JSON a objetos Kotlin usando GSON
+    implementation(libs.retrofit.converter.gson)
+
     // ROOM
     // Base de datos local para guardar proyectos en el dispositivo
     implementation(libs.androidx.room.runtime)
