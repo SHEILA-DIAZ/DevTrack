@@ -18,7 +18,8 @@ import com.tecsup.devtrack.model.Tarea
 fun DashboardScreen(
     proyectos: List<Proyecto>,
     tareas: List<Tarea>,
-    onIrProyectos: () -> Unit
+    onIrProyectos: () -> Unit,
+    onIrRecursos: () -> Unit
 ) {
     val totalProyectos = proyectos.size
     val enDesarrollo = proyectos.count { it.estado == "En desarrollo" }
@@ -74,6 +75,18 @@ fun DashboardScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Ver proyectos")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = onIrRecursos,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            )
+        ) {
+            Text("Recursos Tecnológicos")
         }
     }
 }

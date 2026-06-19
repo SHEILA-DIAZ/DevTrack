@@ -11,9 +11,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.devtrack.ui.screens.DashboardScreen
 import com.tecsup.devtrack.ui.screens.ProyectoScreen
+import com.tecsup.devtrack.ui.screens.RecursosScreen
 import com.tecsup.devtrack.ui.screens.TareaScreen
 import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 import com.tecsup.devtrack.viewmodel.ProyectoViewModelFactory
+import com.tecsup.devtrack.viewmodel.RecursosViewModel
+import com.tecsup.devtrack.viewmodel.RecursosViewModelFactory
 import com.tecsup.devtrack.viewmodel.TareaViewModel
 import com.tecsup.devtrack.viewmodel.TareaViewModelFactory
 
@@ -24,7 +27,8 @@ import com.tecsup.devtrack.viewmodel.TareaViewModelFactory
 @Composable
 fun AppNavigation(
     factory: ProyectoViewModelFactory,
-    tareaFactory: TareaViewModelFactory
+    tareaFactory: TareaViewModelFactory,
+    recursosFactory: RecursosViewModelFactory
 ) {
     val navController = rememberNavController()
 
@@ -34,6 +38,10 @@ fun AppNavigation(
 
     val tareaViewModel: TareaViewModel = viewModel(
         factory = tareaFactory
+    )
+
+    val recursosViewModel: RecursosViewModel = viewModel(
+        factory = recursosFactory
     )
 
     val proyectoUiState by proyectoViewModel.uiState.collectAsState()
@@ -49,6 +57,18 @@ fun AppNavigation(
                 tareas = tareaUiState.tareas,
                 onIrProyectos = {
                     navController.navigate(Routes.PROYECTOS)
+                },
+                onIrRecursos = {
+                    navController.navigate(Routes.RECURSOS)
+                }
+            )
+        }
+
+        composable(Routes.RECURSOS) {
+            RecursosScreen(
+                viewModel = recursosViewModel,
+                onVolver = {
+                    navController.popBackStack()
                 }
             )
         }

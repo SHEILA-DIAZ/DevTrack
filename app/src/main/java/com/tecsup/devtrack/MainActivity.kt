@@ -5,11 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.tecsup.devtrack.data.local.DatabaseProvider
+import com.tecsup.devtrack.data.remote.RetrofitClient
 import com.tecsup.devtrack.navigation.AppNavigation
 import com.tecsup.devtrack.repository.ProyectoRepository
+import com.tecsup.devtrack.repository.RecursosRepository
 import com.tecsup.devtrack.repository.TareaRepository
 import com.tecsup.devtrack.ui.theme.DevTrackTheme
 import com.tecsup.devtrack.viewmodel.ProyectoViewModelFactory
+import com.tecsup.devtrack.viewmodel.RecursosViewModelFactory
 import com.tecsup.devtrack.viewmodel.TareaViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -31,6 +34,11 @@ class MainActivity : ComponentActivity() {
             database.tareaDao()
         )
 
+        // Repository de recursos (Retrofit)
+        val recursosRepository = RecursosRepository(
+            RetrofitClient.instance
+        )
+
         // Factory de proyectos
         val proyectoFactory = ProyectoViewModelFactory(
             proyectoRepository
@@ -41,11 +49,17 @@ class MainActivity : ComponentActivity() {
             tareaRepository
         )
 
+        // Factory de recursos
+        val recursosFactory = RecursosViewModelFactory(
+            recursosRepository
+        )
+
         setContent {
             DevTrackTheme {
                 AppNavigation(
                     factory = proyectoFactory,
-                    tareaFactory = tareaFactory
+                    tareaFactory = tareaFactory,
+                    recursosFactory = recursosFactory
                 )
             }
         }
