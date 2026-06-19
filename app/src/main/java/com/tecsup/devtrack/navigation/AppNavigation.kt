@@ -13,7 +13,7 @@ import com.tecsup.devtrack.ui.screens.DashboardScreen
 import com.tecsup.devtrack.ui.screens.DetalleProyectoScreen
 import com.tecsup.devtrack.ui.screens.ListaProyectosScreen
 import com.tecsup.devtrack.ui.screens.LoginScreen
-import com.tecsup.devtrack.ui.screens.PerfilScreen
+import com.tecsup.devtrack.ui.screens.ProfileScreen
 import com.tecsup.devtrack.ui.screens.ProyectoScreen
 import com.tecsup.devtrack.ui.screens.RecursosScreen
 import com.tecsup.devtrack.ui.screens.RegistroScreen
@@ -108,8 +108,8 @@ fun AppNavigation(
             )
         }
 
-        composable(Routes.PERFIL) {
-            PerfilScreen(onVolver = { navController.popBackStack() })
+        composable(Routes.PROFILE) {
+            ProfileScreen(onVolver = { navController.popBackStack() })
         }
 
         composable(Routes.DETALLE_PROYECTO) {

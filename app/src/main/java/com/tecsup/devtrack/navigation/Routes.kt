@@ -19,7 +19,7 @@ object Routes {
 
     const val RECURSOS = "recursos"
 
-    const val PERFIL = "perfil"
+    const val PROFILE = "profile"
 
     const val DETALLE_PROYECTO = "detalle_proyecto"
 

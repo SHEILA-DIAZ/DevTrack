@@ -95,7 +95,7 @@ fun DashboardScreen(
                     selected = false,
                     onClick = { 
                         scope.launch { drawerState.close() }
-                        onNavegar(Routes.PERFIL) 
+                        onNavegar(Routes.PROFILE)
                     }
                 )
             }
