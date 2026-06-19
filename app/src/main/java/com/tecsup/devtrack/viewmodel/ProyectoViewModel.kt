@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 
 /**
  * ViewModel que gestiona la lógica de negocio de proyectos.
- * Recibe acciones de la UI, interactúa con el repositorio y actualiza el StateFlow.
  */
 class ProyectoViewModel(
     private val repository: ProyectoRepository
@@ -29,38 +28,49 @@ class ProyectoViewModel(
     private fun cargarProyectos() {
         viewModelScope.launch {
             repository.obtenerProyectos().collect { proyectos ->
-                _uiState.update {
-                    it.copy(proyectos = proyectos)
-                }
+                _uiState.update { it.copy(proyectos = proyectos) }
             }
         }
     }
 
     fun actualizarNombre(nombre: String) {
-        _uiState.update {
-            it.copy(nombre = nombre, mensajeError = "")
-        }
+        _uiState.update { it.copy(nombre = nombre, mensajeError = "", mensajeExito = "") }
     }
 
     fun actualizarDescripcion(descripcion: String) {
-        _uiState.update {
-            it.copy(descripcion = descripcion, mensajeError = "")
-        }
+        _uiState.update { it.copy(descripcion = descripcion, mensajeError = "", mensajeExito = "") }
+    }
+
+    fun actualizarTecnologias(tecnologias: String) {
+        _uiState.update { it.copy(tecnologias = tecnologias, mensajeError = "", mensajeExito = "") }
+    }
+
+    fun actualizarFechaInicio(fecha: String) {
+        _uiState.update { it.copy(fechaInicio = fecha, mensajeError = "", mensajeExito = "") }
+    }
+
+    fun actualizarFechaLimite(fecha: String) {
+        _uiState.update { it.copy(fechaLimite = fecha, mensajeError = "", mensajeExito = "") }
     }
 
     fun actualizarEstado(estado: String) {
-        _uiState.update {
-            it.copy(estado = estado)
-        }
+        _uiState.update { it.copy(estado = estado, mensajeError = "", mensajeExito = "") }
     }
 
     fun guardarProyecto() {
         val estadoActual = _uiState.value
 
-        if (estadoActual.nombre.isBlank() || estadoActual.descripcion.isBlank()) {
-            _uiState.update {
-                it.copy(mensajeError = "Complete todos los campos")
-            }
+        // COMENTARIO PARA SUSTENTACIÓN: Validaciones de negocio antes de la persistencia.
+        if (estadoActual.nombre.length < 3) {
+            _uiState.update { it.copy(mensajeError = "El nombre debe tener mínimo 3 caracteres") }
+            return
+        }
+        if (estadoActual.descripcion.length < 5) {
+            _uiState.update { it.copy(mensajeError = "La descripción debe tener mínimo 5 caracteres") }
+            return
+        }
+        if (estadoActual.tecnologias.isBlank() || estadoActual.fechaInicio.isBlank() || estadoActual.fechaLimite.isBlank()) {
+            _uiState.update { it.copy(mensajeError = "Complete todos los campos obligatorios") }
             return
         }
 
@@ -73,21 +83,26 @@ class ProyectoViewModel(
             val nuevoProyecto = Proyecto(
                 nombre = estadoActual.nombre,
                 descripcion = estadoActual.descripcion,
-                tecnologias = "Kotlin",
+                tecnologias = estadoActual.tecnologias,
                 estado = estadoActual.estado,
-                fechaInicio = "2026-01-01",
-                fechaLimite = "2026-12-31",
+                fechaInicio = estadoActual.fechaInicio,
+                fechaLimite = estadoActual.fechaLimite,
                 observaciones = "Proyecto registrado en DevTrack"
             )
 
             repository.guardarProyecto(nuevoProyecto)
 
+            // COMENTARIO PARA SUSTENTACIÓN: Limpieza del formulario y mensaje de éxito.
             _uiState.update {
                 it.copy(
                     nombre = "",
                     descripcion = "",
+                    tecnologias = "",
+                    fechaInicio = "",
+                    fechaLimite = "",
                     estado = "Planificado",
-                    mensajeError = ""
+                    mensajeError = "",
+                    mensajeExito = "Proyecto registrado correctamente"
                 )
             }
         }
@@ -95,24 +110,31 @@ class ProyectoViewModel(
 
     fun seleccionarProyecto(proyecto: Proyecto) {
         proyectoEditando = proyecto
-
         _uiState.update {
             it.copy(
                 nombre = proyecto.nombre,
                 descripcion = proyecto.descripcion,
+                tecnologias = proyecto.tecnologias,
+                fechaInicio = proyecto.fechaInicio,
+                fechaLimite = proyecto.fechaLimite,
                 estado = proyecto.estado,
-                mensajeError = ""
+                mensajeError = "",
+                mensajeExito = ""
             )
         }
     }
 
     private suspend fun actualizarProyecto() {
         val proyecto = proyectoEditando ?: return
+        val estadoActual = _uiState.value
 
         val proyectoActualizado = proyecto.copy(
-            nombre = _uiState.value.nombre,
-            descripcion = _uiState.value.descripcion,
-            estado = _uiState.value.estado
+            nombre = estadoActual.nombre,
+            descripcion = estadoActual.descripcion,
+            tecnologias = estadoActual.tecnologias,
+            fechaInicio = estadoActual.fechaInicio,
+            fechaLimite = estadoActual.fechaLimite,
+            estado = estadoActual.estado
         )
 
         repository.actualizarProyecto(proyectoActualizado)
@@ -121,11 +143,14 @@ class ProyectoViewModel(
             it.copy(
                 nombre = "",
                 descripcion = "",
+                tecnologias = "",
+                fechaInicio = "",
+                fechaLimite = "",
                 estado = "Planificado",
-                mensajeError = ""
+                mensajeError = "",
+                mensajeExito = "Proyecto actualizado correctamente"
             )
         }
-
         proyectoEditando = null
     }
 

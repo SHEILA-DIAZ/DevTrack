@@ -1,97 +1,130 @@
 package com.tecsup.devtrack.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 
 /**
- * Pantalla principal de proyectos.
- * Permite registrar, editar y listar proyectos, enviando acciones al ViewModel.
+ * Pantalla de registro de proyectos (Formulario).
+ * Se ha simplificado para contener solo el formulario y mejorar el orden visual.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProyectoScreen(
     viewModel: ProyectoViewModel,
-    onVolver: () -> Unit,
-    onVerTareas: (Int) -> Unit
+    onVolver: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
     var menuExpandido by remember { mutableStateOf(false) }
 
-    val estados = listOf(
-        "Planificado",
-        "En desarrollo",
-        "Finalizado"
-    )
+    val estados = listOf("Planificado", "En desarrollo", "Finalizado")
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .statusBarsPadding() // COMENTARIO PARA SUSTENTACIÓN: Padding seguro para evitar que el título se tape.
+            .padding(horizontal = 20.dp, vertical = 8.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Text(
-            text = "DevTrack",
-            style = MaterialTheme.typography.headlineMedium
+            text = "Registrar proyecto",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = "Completa la información para organizar tu nuevo proyecto tecnológico.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
+        )
 
-        Button(
-            onClick = onVolver,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Volver al Dashboard")
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Mensaje de éxito
+        if (uiState.mensajeExito.isNotBlank()) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            ) {
+                Text(
+                    text = uiState.mensajeExito,
+                    modifier = Modifier.padding(12.dp),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
+        // Formulario
         OutlinedTextField(
             value = uiState.nombre,
             onValueChange = { viewModel.actualizarNombre(it) },
             label = { Text("Nombre del proyecto") },
             modifier = Modifier.fillMaxWidth(),
-            isError = uiState.mensajeError.isNotBlank() && uiState.nombre.isBlank()
+            isError = uiState.mensajeError.contains("nombre")
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(
             value = uiState.descripcion,
             onValueChange = { viewModel.actualizarDescripcion(it) },
             label = { Text("Descripción") },
             modifier = Modifier.fillMaxWidth(),
-            isError = uiState.mensajeError.isNotBlank() && uiState.descripcion.isBlank()
+            minLines = 2,
+            isError = uiState.mensajeError.contains("descripción")
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedTextField(
+            value = uiState.tecnologias,
+            onValueChange = { viewModel.actualizarTecnologias(it) },
+            label = { Text("Tecnologías utilizadas") },
+            placeholder = { Text("Ej: Kotlin, Compose, Room") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedTextField(
+                value = uiState.fechaInicio,
+                onValueChange = { viewModel.actualizarFechaInicio(it) },
+                label = { Text("Fecha Inicio") },
+                modifier = Modifier.weight(1f)
+            )
+            OutlinedTextField(
+                value = uiState.fechaLimite,
+                onValueChange = { viewModel.actualizarFechaLimite(it) },
+                label = { Text("Fecha Límite") },
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         ExposedDropdownMenuBox(
             expanded = menuExpandido,
-            onExpandedChange = {
-                menuExpandido = !menuExpandido
-            }
+            onExpandedChange = { menuExpandido = !menuExpandido }
         ) {
             OutlinedTextField(
                 value = uiState.estado,
                 onValueChange = {},
                 readOnly = true,
                 label = { Text("Estado del proyecto") },
-                modifier = Modifier
-                    .menuAnchor()
-                    .fillMaxWidth()
+                modifier = Modifier.menuAnchor().fillMaxWidth()
             )
 
             ExposedDropdownMenu(
                 expanded = menuExpandido,
-                onDismissRequest = {
-                    menuExpandido = false
-                }
+                onDismissRequest = { menuExpandido = false }
             ) {
                 estados.forEach { estado ->
                     DropdownMenuItem(
@@ -105,7 +138,16 @@ fun ProyectoScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        if (uiState.mensajeError.isNotBlank()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = uiState.mensajeError,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = { viewModel.guardarProyecto() },
@@ -114,74 +156,15 @@ fun ProyectoScreen(
             Text("Guardar proyecto")
         }
 
-        if (uiState.mensajeError.isNotBlank()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = uiState.mensajeError,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium
-            )
+        Spacer(modifier = Modifier.height(12.dp))
+
+        OutlinedButton(
+            onClick = onVolver,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Volver")
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = "Lista de proyectos",
-            style = MaterialTheme.typography.titleLarge
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyColumn {
-            items(uiState.proyectos) { proyecto ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 6.dp)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(12.dp)
-                    ) {
-                        Text(text = proyecto.nombre)
-                        Text(text = proyecto.descripcion)
-                        Text(text = proyecto.estado)
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Button(
-                            onClick = {
-                                onVerTareas(proyecto.id)
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Ver tareas")
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Button(
-                                onClick = {
-                                    viewModel.seleccionarProyecto(proyecto)
-                                }
-                            ) {
-                                Text("Editar")
-                            }
-
-                            Button(
-                                onClick = {
-                                    viewModel.eliminarProyecto(proyecto)
-                                }
-                            ) {
-                                Text("Eliminar")
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        
+        Spacer(modifier = Modifier.height(32.dp))
     }
 }

@@ -32,14 +32,11 @@ fun DashboardScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // Cálculo de estadísticas de proyectos
-    // COMENTARIO PARA SUSTENTACIÓN: Se obtienen las métricas filtrando la lista de proyectos por su estado.
     val totalProyectos = proyectos.size
     val enDesarrollo = proyectos.count { it.estado == "En desarrollo" }
     val finalizados = proyectos.count { it.estado == "Finalizado" }
     val planificados = proyectos.count { it.estado == "Planificado" }
 
-    // Cálculo de estadísticas de tareas
     val totalTareas = tareas.size
     val completadas = tareas.count { it.estado == "Completada" }
 
@@ -55,8 +52,7 @@ fun DashboardScreen(
                     fontWeight = FontWeight.Bold
                 )
                 HorizontalDivider()
-                // Navegación desde el menú lateral
-                // COMENTARIO PARA SUSTENTACIÓN: El menú lateral centraliza el acceso a todas las secciones.
+                
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Add, contentDescription = null) },
                     label = { Text("Agregar proyecto") },
@@ -72,16 +68,16 @@ fun DashboardScreen(
                     selected = false,
                     onClick = { 
                         scope.launch { drawerState.close() }
-                        onNavegar(Routes.PROYECTOS) 
+                        onNavegar(Routes.LISTA_PROYECTOS) 
                     }
                 )
                 NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = null) },
-                    label = { Text("Detalle del proyecto") },
+                    icon = { Icon(Icons.Default.CheckCircle, contentDescription = null) },
+                    label = { Text("Lista de tareas") },
                     selected = false,
                     onClick = { 
                         scope.launch { drawerState.close() }
-                        onNavegar(Routes.DETALLE_PROYECTO) 
+                        onNavegar(Routes.tareas(0))
                     }
                 )
                 NavigationDrawerItem(
@@ -132,10 +128,8 @@ fun DashboardScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Gráfico de avance (Placeholder con lógica real)
-                // COMENTARIO PARA SUSTENTACIÓN: Se muestra el progreso basado en proyectos finalizados vs total.
                 Card(
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    modifier = Modifier.fillMaxWidth().height(180.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
                 ) {
@@ -144,18 +138,14 @@ fun DashboardScreen(
                             val progreso = if(totalProyectos > 0) finalizados.toFloat() / totalProyectos else 0f
                             CircularProgressIndicator(
                                 progress = { progreso },
-                                modifier = Modifier.size(80.dp),
+                                modifier = Modifier.size(70.dp),
                                 strokeWidth = 8.dp
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "Gráfico de avance de proyectos",
+                                "Gráfico de avance general",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "${(progreso * 100).toInt()}% completado",
-                                style = MaterialTheme.typography.bodySmall
                             )
                         }
                     }
@@ -211,10 +201,10 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 Button(
-                    onClick = { onNavegar(Routes.PROYECTOS) },
+                    onClick = { onNavegar(Routes.LISTA_PROYECTOS) },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Gestionar Proyectos")
+                    Text("Ir a Lista de Proyectos")
                 }
             }
         }

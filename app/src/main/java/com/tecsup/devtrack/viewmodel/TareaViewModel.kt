@@ -26,11 +26,11 @@ class TareaViewModel(
         cargarTodasLasTareas()
     }
 
-    private fun cargarTodasLasTareas() {
+    fun cargarTodasLasTareas() {
         viewModelScope.launch {
             repository.obtenerTareas().collect { tareas ->
                 _uiState.update {
-                    it.copy(tareas = tareas)
+                    it.copy(tareas = tareas, proyectoId = 0)
                 }
             }
         }

@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.devtrack.ui.screens.DashboardScreen
 import com.tecsup.devtrack.ui.screens.DetalleProyectoScreen
+import com.tecsup.devtrack.ui.screens.ListaProyectosScreen
 import com.tecsup.devtrack.ui.screens.LoginScreen
 import com.tecsup.devtrack.ui.screens.PerfilScreen
 import com.tecsup.devtrack.ui.screens.ProyectoScreen
@@ -129,9 +130,21 @@ fun AppNavigation(
                 viewModel = proyectoViewModel,
                 onVolver = {
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.LISTA_PROYECTOS) {
+            ListaProyectosScreen(
+                viewModel = proyectoViewModel,
+                onVolver = {
+                    navController.popBackStack()
                 },
                 onVerTareas = { proyectoId ->
                     navController.navigate(Routes.tareas(proyectoId))
+                },
+                onEditarProyecto = {
+                    navController.navigate(Routes.PROYECTOS)
                 }
             )
         }

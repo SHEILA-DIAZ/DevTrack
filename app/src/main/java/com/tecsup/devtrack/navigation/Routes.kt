@@ -15,6 +15,8 @@ object Routes {
 
     const val PROYECTOS = "proyectos"
 
+    const val LISTA_PROYECTOS = "lista_proyectos"
+
     const val RECURSOS = "recursos"
 
     const val PERFIL = "perfil"
