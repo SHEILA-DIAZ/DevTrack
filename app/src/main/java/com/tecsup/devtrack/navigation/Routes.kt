@@ -5,6 +5,12 @@ package com.tecsup.devtrack.navigation
  */
 object Routes {
 
+    const val SPLASH = "splash"
+
+    const val LOGIN = "login"
+
+    const val REGISTRO = "registro"
+
     const val DASHBOARD = "dashboard"
 
     const val PROYECTOS = "proyectos"

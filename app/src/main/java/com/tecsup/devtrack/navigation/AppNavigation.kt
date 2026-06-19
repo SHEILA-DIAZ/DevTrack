@@ -10,8 +10,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.tecsup.devtrack.ui.screens.DashboardScreen
+import com.tecsup.devtrack.ui.screens.LoginScreen
 import com.tecsup.devtrack.ui.screens.ProyectoScreen
 import com.tecsup.devtrack.ui.screens.RecursosScreen
+import com.tecsup.devtrack.ui.screens.RegistroScreen
+import com.tecsup.devtrack.ui.screens.SplashScreen
 import com.tecsup.devtrack.ui.screens.TareaScreen
 import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 import com.tecsup.devtrack.viewmodel.ProyectoViewModelFactory
@@ -49,8 +52,35 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = Routes.DASHBOARD
+        startDestination = Routes.SPLASH
     ) {
+        composable(Routes.SPLASH) {
+            SplashScreen(
+                onNavegarAlLogin = {
+                    navController.navigate(Routes.LOGIN)
+                },
+                onNavegarAlRegistro = {
+                    navController.navigate(Routes.REGISTRO)
+                }
+            )
+        }
+
+        composable(Routes.LOGIN) {
+            LoginScreen(
+                onVolver = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(Routes.REGISTRO) {
+            RegistroScreen(
+                onVolver = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
         composable(Routes.DASHBOARD) {
             DashboardScreen(
                 proyectos = proyectoUiState.proyectos,
