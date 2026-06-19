@@ -9,6 +9,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel que gestiona la lógica de negocio de proyectos.
+ * Recibe acciones de la UI, interactúa con el repositorio y actualiza el StateFlow.
+ */
 class ProyectoViewModel(
     private val repository: ProyectoRepository
 ) : ViewModel() {

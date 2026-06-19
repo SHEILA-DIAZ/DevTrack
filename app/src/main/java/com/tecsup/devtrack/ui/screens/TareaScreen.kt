@@ -9,6 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.devtrack.viewmodel.TareaViewModel
 
+/**
+ * Pantalla que gestiona las tareas de un proyecto.
+ * Usa el proyectoId recibido para filtrar y mostrar solo las tareas correspondientes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TareaScreen(

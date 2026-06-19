@@ -2,6 +2,10 @@ package com.tecsup.devtrack.data.local
 
 import com.tecsup.devtrack.model.Proyecto
 
+/**
+ * Funciones de extensión para convertir entre ProyectoEntity (DB) y Proyecto (UI).
+ * Esto separa los datos de la capa de persistencia de los modelos de negocio.
+ */
 fun ProyectoEntity.toProyecto(): Proyecto {
     return Proyecto(
         id = id,

@@ -3,6 +3,9 @@ package com.tecsup.devtrack.data.local
 import android.content.Context
 import androidx.room.Room
 
+/**
+ * Proveedor de la base de datos que asegura una única instancia (Singleton) de la base de datos local.
+ */
 object DatabaseProvider {
 
     @Volatile

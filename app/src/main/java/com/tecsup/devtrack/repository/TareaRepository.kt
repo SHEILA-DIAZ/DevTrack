@@ -7,6 +7,9 @@ import com.tecsup.devtrack.model.Tarea
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Repositorio para la gestión de tareas, desacoplando la lógica de datos de la UI.
+ */
 class TareaRepository(
     private val tareaDao: TareaDao
 ) {

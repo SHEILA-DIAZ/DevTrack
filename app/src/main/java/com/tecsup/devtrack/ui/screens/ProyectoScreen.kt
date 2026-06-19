@@ -9,6 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecsup.devtrack.viewmodel.ProyectoViewModel
 
+/**
+ * Pantalla principal de proyectos.
+ * Permite registrar, editar y listar proyectos, enviando acciones al ViewModel.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProyectoScreen(

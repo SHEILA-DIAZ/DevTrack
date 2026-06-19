@@ -3,6 +3,9 @@ package com.tecsup.devtrack.data.local
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Interfaz DAO que define las operaciones CRUD para la tabla de proyectos.
+ */
 @Dao
 interface ProyectoDao {
 

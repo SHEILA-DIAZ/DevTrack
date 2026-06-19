@@ -7,6 +7,10 @@ import com.tecsup.devtrack.model.Proyecto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+/**
+ * Repositorio que sirve de intermediario entre los DAOs y los ViewModels.
+ * Gestiona el acceso a los datos de proyectos.
+ */
 class ProyectoRepository(
     private val proyectoDao: ProyectoDao
 ) {

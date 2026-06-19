@@ -1,5 +1,8 @@
 package com.tecsup.devtrack.navigation
 
+/**
+ * Define las rutas de navegación de la aplicación y ayuda a construir URIs con parámetros.
+ */
 object Routes {
 
     const val DASHBOARD = "dashboard"

@@ -3,6 +3,9 @@ package com.tecsup.devtrack.data.local
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
+/**
+ * Representa la tabla "proyectos" en la base de datos local de Room.
+ */
 @Entity(tableName = "proyectos")
 data class ProyectoEntity(
     @PrimaryKey(autoGenerate = true)

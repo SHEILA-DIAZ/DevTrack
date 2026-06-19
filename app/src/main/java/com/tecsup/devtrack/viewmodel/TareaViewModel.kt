@@ -9,6 +9,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel que conecta la UI de tareas con el repositorio.
+ * Gestiona el filtrado de tareas por ID de proyecto.
+ */
 class TareaViewModel(
     private val repository: TareaRepository
 ) : ViewModel() {

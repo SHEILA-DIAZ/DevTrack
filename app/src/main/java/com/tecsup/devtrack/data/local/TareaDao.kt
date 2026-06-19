@@ -3,6 +3,9 @@ package com.tecsup.devtrack.data.local
 import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * Operaciones CRUD de Room para la gestión de tareas en la base de datos local.
+ */
 @Dao
 interface TareaDao {
 

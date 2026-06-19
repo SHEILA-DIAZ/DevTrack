@@ -10,6 +10,10 @@ import androidx.compose.ui.unit.dp
 import com.tecsup.devtrack.model.Proyecto
 import com.tecsup.devtrack.model.Tarea
 
+/**
+ * Dashboard principal que muestra estadísticas generales del proyecto.
+ * Resume el estado de todos los proyectos y tareas registrados.
+ */
 @Composable
 fun DashboardScreen(
     proyectos: List<Proyecto>,

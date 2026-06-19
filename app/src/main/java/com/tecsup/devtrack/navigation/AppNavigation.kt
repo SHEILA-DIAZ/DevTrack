@@ -17,6 +17,10 @@ import com.tecsup.devtrack.viewmodel.ProyectoViewModelFactory
 import com.tecsup.devtrack.viewmodel.TareaViewModel
 import com.tecsup.devtrack.viewmodel.TareaViewModelFactory
 
+/**
+ * Configuración del NavHost para gestionar la navegación entre pantallas.
+ * Define cómo se pasan parámetros, como el proyectoId, entre destinos.
+ */
 @Composable
 fun AppNavigation(
     factory: ProyectoViewModelFactory,

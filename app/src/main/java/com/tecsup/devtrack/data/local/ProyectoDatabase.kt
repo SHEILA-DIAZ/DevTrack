@@ -3,6 +3,9 @@ package com.tecsup.devtrack.data.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
+/**
+ * Clase principal de la base de datos de Room que centraliza las entidades y los DAOs.
+ */
 @Database(
     entities = [
         ProyectoEntity::class,
