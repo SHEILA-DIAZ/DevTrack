@@ -69,6 +69,15 @@ fun AppNavigation(
             LoginScreen(
                 onVolver = {
                     navController.popBackStack()
+                },
+                onNavegarAlRegistro = {
+                    navController.navigate(Routes.REGISTRO)
+                },
+                onIngresarAlDashboard = {
+                    navController.navigate(Routes.DASHBOARD) {
+                        // Limpiamos el historial para que no pueda volver al Login con el botón atrás
+                        popUpTo(Routes.LOGIN) { inclusive = true }
+                    }
                 }
             )
         }
