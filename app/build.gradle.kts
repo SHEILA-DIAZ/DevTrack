@@ -1,9 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-
-    // KSP permite que Room genere código automáticamente
     alias(libs.plugins.ksp)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -76,6 +76,16 @@ dependencies {
     implementation(libs.retrofit)
     // Conversor de JSON a objetos Kotlin usando GSON
     implementation(libs.retrofit.converter.gson)
+
+    // FIREBASE
+    // Importa el BoM para gestionar versiones de librerías de Firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.15.0"))
+    // Autenticación de usuarios
+    implementation("com.google.firebase:firebase-auth")
+    // Base de datos en la nube NoSQL
+    implementation("com.google.firebase:firebase-firestore")
+    // Notificaciones Push y mensajería en la nube
+    implementation("com.google.firebase:firebase-messaging")
 
     // COIL
     // Librería para cargar imágenes remotas en Compose

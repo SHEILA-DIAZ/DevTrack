@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "450219488499",
+    "project_id": "devtrack-740a6",
+    "storage_bucket": "devtrack-740a6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450219488499:android:60d0ce6808128cec2b7386",
+        "android_client_info": {
+          "package_name": "com.tecsup.devtrack"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnNDb9pOqPsSUHC1QJ9Hc8QtMskfdkrZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
