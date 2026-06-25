@@ -8,6 +8,7 @@ import com.tecsup.devtrack.model.Tarea
 fun TareaEntity.toTarea(): Tarea {
     return Tarea(
         id = id,
+        userId = userId,
         proyectoId = proyectoId,
         nombre = nombre,
         descripcion = descripcion,
@@ -18,6 +19,7 @@ fun TareaEntity.toTarea(): Tarea {
 fun Tarea.toEntity(): TareaEntity {
     return TareaEntity(
         id = id,
+        userId = userId,
         proyectoId = proyectoId,
         nombre = nombre,
         descripcion = descripcion,

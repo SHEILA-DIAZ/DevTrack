@@ -10,6 +10,7 @@ import androidx.room.PrimaryKey
 data class ProyectoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val userId: String, // COMENTARIO PARA SUSTENTACIÓN: Permite filtrar datos locales por usuario autenticado
     val nombre: String,
     val descripcion: String,
     val tecnologias: String,

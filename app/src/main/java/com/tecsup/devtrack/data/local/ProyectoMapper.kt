@@ -9,6 +9,7 @@ import com.tecsup.devtrack.model.Proyecto
 fun ProyectoEntity.toProyecto(): Proyecto {
     return Proyecto(
         id = id,
+        userId = userId,
         nombre = nombre,
         descripcion = descripcion,
         tecnologias = tecnologias,
@@ -22,6 +23,7 @@ fun ProyectoEntity.toProyecto(): Proyecto {
 fun Proyecto.toEntity(): ProyectoEntity {
     return ProyectoEntity(
         id = id,
+        userId = userId,
         nombre = nombre,
         descripcion = descripcion,
         tecnologias = tecnologias,

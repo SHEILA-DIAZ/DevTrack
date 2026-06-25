@@ -39,7 +39,8 @@ import kotlinx.coroutines.launch
 fun DashboardScreen(
     proyectos: List<Proyecto>,
     tareas: List<Tarea>,
-    onNavegar: (String) -> Unit
+    onNavegar: (String) -> Unit,
+    onAgregarProyecto: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -67,7 +68,7 @@ fun DashboardScreen(
                 
                 DrawerOption(Icons.Default.AddCircle, "Agregar proyecto", Color(0xFF4B6CB7)) {
                     scope.launch { drawerState.close() }
-                    onNavegar(Routes.PROYECTOS)
+                    onAgregarProyecto()
                 }
                 DrawerOption(Icons.AutoMirrored.Filled.List, "Lista de proyectos", Color(0xFF4B6CB7)) {
                     scope.launch { drawerState.close() }

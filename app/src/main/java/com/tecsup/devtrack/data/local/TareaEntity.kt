@@ -12,6 +12,8 @@ data class TareaEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
+    val userId: String, // COMENTARIO PARA SUSTENTACIÓN: Garantiza privacidad de tareas por UID
+
     val proyectoId: Int,
 
     val nombre: String,

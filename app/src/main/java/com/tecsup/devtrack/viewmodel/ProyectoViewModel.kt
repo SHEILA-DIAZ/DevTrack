@@ -17,19 +17,52 @@ class ProyectoViewModel(
 ) : ViewModel() {
 
     private var proyectoEditando: Proyecto? = null
+    private var dataJob: kotlinx.coroutines.Job? = null
 
     private val _uiState = MutableStateFlow(ProyectoUiState())
     val uiState: StateFlow<ProyectoUiState> = _uiState
 
-    init {
-        cargarProyectos()
-    }
-
-    private fun cargarProyectos() {
-        viewModelScope.launch {
-            repository.obtenerProyectos().collect { proyectos ->
+    /**
+     * Inicia la observación de datos para un usuario específico.
+     * COMENTARIO PARA SUSTENTACIÓN: Garantiza el aislamiento multiusuario reiniciando el Flow.
+     */
+    fun cargarDatosUsuario(userId: String) {
+        if (userId.isEmpty()) return
+        
+        dataJob?.cancel()
+        dataJob = viewModelScope.launch {
+            repository.sincronizarDesdeNube()
+            repository.obtenerProyectos(userId).collect { proyectos ->
                 _uiState.update { it.copy(proyectos = proyectos) }
             }
+        }
+    }
+
+    /**
+     * Limpia los datos en memoria al cerrar sesión.
+     */
+    fun limpiarDatos() {
+        dataJob?.cancel()
+        _uiState.update { ProyectoUiState() }
+        proyectoEditando = null
+    }
+
+    /**
+     * Limpia el formulario para registrar un nuevo proyecto.
+     */
+    fun limpiarFormulario() {
+        proyectoEditando = null
+        _uiState.update {
+            it.copy(
+                nombre = "",
+                descripcion = "",
+                tecnologias = "",
+                fechaInicio = "",
+                fechaLimite = "",
+                estado = "Planificado",
+                mensajeError = "",
+                mensajeExito = ""
+            )
         }
     }
 

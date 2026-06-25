@@ -9,15 +9,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ProyectoDao {
 
-    @Query("SELECT * FROM proyectos")
-    fun obtenerProyectos(): Flow<List<ProyectoEntity>>
+    @Query("SELECT * FROM proyectos WHERE userId = :userId")
+    fun obtenerProyectosPorUsuario(userId: String): Flow<List<ProyectoEntity>>
 
-    @Insert
-    suspend fun guardarProyecto(proyecto: ProyectoEntity)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarProyecto(proyecto: ProyectoEntity): Long
 
     @Update
     suspend fun actualizarProyecto(proyecto: ProyectoEntity)
 
     @Delete
     suspend fun eliminarProyecto(proyecto: ProyectoEntity)
+    
+    @Query("DELETE FROM proyectos WHERE userId = :userId")
+    suspend fun limpiarCacheUsuario(userId: String)
 }

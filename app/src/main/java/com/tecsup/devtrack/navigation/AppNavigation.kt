@@ -1,6 +1,7 @@
 package com.tecsup.devtrack.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -44,6 +45,19 @@ fun AppNavigation(
     val tareaViewModel: TareaViewModel = viewModel(
         factory = tareaFactory
     )
+
+    // COMENTARIO PARA SUSTENTACIÓN: Sincronización global del estado del usuario.
+    // Cuando el ID del usuario cambia (Login/Logout), reiniciamos la carga de datos.
+    LaunchedEffect(authUiState.userId) {
+        val uid = authUiState.userId
+        if (uid != null) {
+            proyectoViewModel.cargarDatosUsuario(uid)
+            tareaViewModel.cargarDatosUsuario(uid)
+        } else {
+            proyectoViewModel.limpiarDatos()
+            tareaViewModel.limpiarDatos()
+        }
+    }
 
     val recursosViewModel: RecursosViewModel = viewModel(
         factory = recursosFactory
@@ -116,6 +130,10 @@ fun AppNavigation(
                 tareas = tareaUiState.tareas,
                 onNavegar = { ruta ->
                     navController.navigate(ruta)
+                },
+                onAgregarProyecto = {
+                    proyectoViewModel.limpiarFormulario()
+                    navController.navigate(Routes.PROYECTOS)
                 }
             )
         }

@@ -6,6 +6,7 @@ package com.tecsup.devtrack.model
  */
 data class Proyecto(
     val id: Int = 0,
+    val userId: String = "", // COMENTARIO PARA SUSTENTACIÓN: Identificador del usuario propietario en Firebase
     val nombre: String = "",
     val descripcion: String = "",
     val tecnologias: String = "",

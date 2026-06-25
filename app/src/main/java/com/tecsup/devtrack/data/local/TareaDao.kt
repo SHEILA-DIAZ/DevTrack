@@ -9,26 +9,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface TareaDao {
 
-    @Query("SELECT * FROM tareas")
-    fun obtenerTareas(): Flow<List<TareaEntity>>
+    @Query("SELECT * FROM tareas WHERE userId = :userId")
+    fun obtenerTareasPorUsuario(userId: String): Flow<List<TareaEntity>>
 
-    @Query("SELECT * FROM tareas WHERE proyectoId = :proyectoId")
-    fun obtenerTareasPorProyecto(
-        proyectoId: Int
-    ): Flow<List<TareaEntity>>
+    @Query("SELECT * FROM tareas WHERE proyectoId = :proyectoId AND userId = :userId")
+    fun obtenerTareasPorProyecto(proyectoId: Int, userId: String): Flow<List<TareaEntity>>
 
-    @Insert
-    suspend fun guardarTarea(
-        tarea: TareaEntity
-    )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun guardarTarea(tarea: TareaEntity): Long
 
     @Update
-    suspend fun actualizarTarea(
-        tarea: TareaEntity
-    )
+    suspend fun actualizarTarea(tarea: TareaEntity)
 
     @Delete
-    suspend fun eliminarTarea(
-        tarea: TareaEntity
-    )
+    suspend fun eliminarTarea(tarea: TareaEntity)
 }
