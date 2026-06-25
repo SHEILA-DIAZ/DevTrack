@@ -8,9 +8,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +25,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.tecsup.devtrack.viewmodel.AuthViewModel
+
 /**
  * Pantalla de perfil de usuario para DevTrack rediseñada con estilo SaaS Premium.
  * COMENTARIO PARA SUSTENTACIÓN: Utiliza una arquitectura visual de capas con gradientes
@@ -29,8 +34,11 @@ import androidx.compose.ui.unit.sp
  */
 @Composable
 fun ProfileScreen(
-    onVolver: () -> Unit
+    viewModel: AuthViewModel,
+    onVolver: () -> Unit,
+    onLogout: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val gradientBrush = Brush.verticalGradient(
         colors = listOf(Color(0xFF2D3E9F), Color(0xFF4B6CB7))
     )
@@ -77,14 +85,14 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Usuario DevTrack",
+                    text = uiState.userEmail ?: "Usuario DevTrack",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
                 Text(
-                    text = "usuario@devtrack.com",
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = "ID: ${uiState.userId ?: "N/A"}",
+                    style = MaterialTheme.typography.bodySmall,
                     color = Color.White.copy(alpha = 0.8f)
                 )
             }
@@ -171,6 +179,26 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.height(32.dp))
+
+            // Botón Cerrar Sesión
+            OutlinedButton(
+                onClick = {
+                    viewModel.logout()
+                    onLogout()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                shape = RoundedCornerShape(16.dp),
+                border = androidx.compose.foundation.BorderStroke(1.5.dp, Color(0xFFD32F2F)),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFD32F2F))
+            ) {
+                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Cerrar sesión", fontWeight = FontWeight.Bold)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Botón Volver Premium
             Button(

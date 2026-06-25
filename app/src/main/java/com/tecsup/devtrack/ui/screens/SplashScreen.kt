@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -34,8 +35,17 @@ import coil.compose.AsyncImage
 @Composable
 fun SplashScreen(
     onNavegarAlLogin: () -> Unit,
-    onNavegarAlRegistro: () -> Unit
+    onNavegarAlRegistro: () -> Unit,
+    isAuthenticated: Boolean = false,
+    onNavigateToDashboard: () -> Unit = {}
 ) {
+    // Redirección automática si ya hay sesión iniciada
+    LaunchedEffect(isAuthenticated) {
+        if (isAuthenticated) {
+            onNavigateToDashboard()
+        }
+    }
+
     // COMENTARIO PARA SUSTENTACIÓN: Mantenemos el degradado identitario de DevTrack.
     val backgroundBrush = Brush.verticalGradient(
         colors = listOf(

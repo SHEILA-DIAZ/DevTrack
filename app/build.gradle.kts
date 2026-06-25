@@ -86,6 +86,8 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     // Notificaciones Push y mensajería en la nube
     implementation("com.google.firebase:firebase-messaging")
+    // Soporte para await() en tareas de Firebase
+    implementation(libs.kotlinx.coroutines.play.services)
 
     // COIL
     // Librería para cargar imágenes remotas en Compose

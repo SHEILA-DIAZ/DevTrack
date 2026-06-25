@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 
+import com.tecsup.devtrack.viewmodel.AuthViewModel
+
 /**
  * Pantalla de Inicio de Sesión de DevTrack.
  * COMENTARIO PARA SUSTENTACIÓN: Esta pantalla gestiona el acceso de usuarios siguiendo la identidad visual
@@ -31,10 +33,24 @@ import coil.compose.AsyncImage
  */
 @Composable
 fun LoginScreen(
+    viewModel: AuthViewModel,
     onVolver: () -> Unit,
     onNavegarAlRegistro: () -> Unit,
     onIngresarAlDashboard: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Limpiar mensajes al entrar a la pantalla
+    LaunchedEffect(Unit) {
+        viewModel.clearMessages()
+    }
+
+    // Efecto para navegar cuando la autenticación es exitosa
+    LaunchedEffect(uiState.isAuthenticated) {
+        if (uiState.isAuthenticated) {
+            onIngresarAlDashboard()
+        }
+    }
     // Estados para los campos de texto
     var correo by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -215,6 +231,16 @@ fun LoginScreen(
                     }
 
                     // COMENTARIO PARA SUSTENTACIÓN: Botón principal con el color identitario.
+                    if (uiState.errorMessage != null) {
+                        Text(
+                            text = uiState.errorMessage!!,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
                     Button(
                         onClick = {
                             var esValido = true
@@ -235,19 +261,28 @@ fun LoginScreen(
                             }
 
                             if (esValido) {
-                                onIngresarAlDashboard()
+                                viewModel.login(correo, password)
                             }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
+                        enabled = !uiState.isLoading,
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4B6CB7)),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                     ) {
-                        Icon(Icons.Default.AccountCircle, contentDescription = null)
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text("Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Icon(Icons.Default.AccountCircle, contentDescription = null)
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text("Iniciar sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }

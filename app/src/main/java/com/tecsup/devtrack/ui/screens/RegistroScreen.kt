@@ -23,6 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+import com.tecsup.devtrack.viewmodel.AuthViewModel
+
 /**
  * Pantalla de Registro de DevTrack rediseñada con estilo Premium.
  * COMENTARIO PARA SUSTENTACIÓN: Implementa una interfaz de usuario moderna tipo SaaS,
@@ -30,9 +32,24 @@ import androidx.compose.ui.unit.sp
  */
 @Composable
 fun RegistroScreen(
+    viewModel: AuthViewModel,
     onVolver: () -> Unit,
-    onNavegarAlLogin: () -> Unit
+    onNavegarAlLogin: () -> Unit,
+    onNavigateToDashboard: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
+    // Limpiar mensajes al entrar a la pantalla
+    LaunchedEffect(Unit) {
+        viewModel.clearMessages()
+    }
+
+    // Efecto para navegar cuando el registro es exitoso
+    LaunchedEffect(uiState.isAuthenticated) {
+        if (uiState.isAuthenticated) {
+            onNavigateToDashboard()
+        }
+    }
     // Estados para los campos del formulario (Mantenidos para lógica)
     var nombre by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
@@ -48,8 +65,6 @@ fun RegistroScreen(
     var correoError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
-
-    var registroExitoso by remember { mutableStateOf(false) }
 
     // COMENTARIO PARA SUSTENTACIÓN: Fondo con formas decorativas sutiles para estética premium.
     Box(
@@ -205,9 +220,19 @@ fun RegistroScreen(
                         }
                     }
 
-                    if (registroExitoso) {
+                    if (uiState.errorMessage != null) {
                         Text(
-                            text = "Cuenta creada correctamente",
+                            text = uiState.errorMessage!!,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    if (uiState.successMessage != null) {
+                        Text(
+                            text = uiState.successMessage!!,
                             color = Color(0xFF2E7D32),
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
@@ -225,16 +250,27 @@ fun RegistroScreen(
                             if (password.length < 6) { passwordError = "Mínimo 6 caracteres"; esValido = false }
                             if (password != confirmPassword) { confirmPasswordError = "No coinciden"; esValido = false }
 
-                            if (esValido) { registroExitoso = true }
+                            if (esValido) { 
+                                viewModel.register(correo, password)
+                            }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(56.dp),
+                        enabled = !uiState.isLoading,
                         shape = RoundedCornerShape(16.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4B6CB7)),
                         elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
                     ) {
-                        Text("Crear cuenta", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                        } else {
+                            Text("Crear cuenta", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }

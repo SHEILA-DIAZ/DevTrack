@@ -19,12 +19,7 @@ import com.tecsup.devtrack.ui.screens.RecursosScreen
 import com.tecsup.devtrack.ui.screens.RegistroScreen
 import com.tecsup.devtrack.ui.screens.SplashScreen
 import com.tecsup.devtrack.ui.screens.TareaScreen
-import com.tecsup.devtrack.viewmodel.ProyectoViewModel
-import com.tecsup.devtrack.viewmodel.ProyectoViewModelFactory
-import com.tecsup.devtrack.viewmodel.RecursosViewModel
-import com.tecsup.devtrack.viewmodel.RecursosViewModelFactory
-import com.tecsup.devtrack.viewmodel.TareaViewModel
-import com.tecsup.devtrack.viewmodel.TareaViewModelFactory
+import com.tecsup.devtrack.viewmodel.*
 
 /**
  * Configuración del NavHost para gestionar la navegación entre pantallas.
@@ -34,9 +29,13 @@ import com.tecsup.devtrack.viewmodel.TareaViewModelFactory
 fun AppNavigation(
     factory: ProyectoViewModelFactory,
     tareaFactory: TareaViewModelFactory,
-    recursosFactory: RecursosViewModelFactory
+    recursosFactory: RecursosViewModelFactory,
+    authFactory: AuthViewModelFactory
 ) {
     val navController = rememberNavController()
+
+    val authViewModel: AuthViewModel = viewModel(factory = authFactory)
+    val authUiState by authViewModel.uiState.collectAsState()
 
     val proyectoViewModel: ProyectoViewModel = viewModel(
         factory = factory
@@ -64,12 +63,19 @@ fun AppNavigation(
                 },
                 onNavegarAlRegistro = {
                     navController.navigate(Routes.REGISTRO)
+                },
+                isAuthenticated = authUiState.isAuthenticated,
+                onNavigateToDashboard = {
+                    navController.navigate(Routes.DASHBOARD) {
+                        popUpTo(Routes.SPLASH) { inclusive = true }
+                    }
                 }
             )
         }
 
         composable(Routes.LOGIN) {
             LoginScreen(
+                viewModel = authViewModel,
                 onVolver = {
                     navController.popBackStack()
                 },
@@ -87,11 +93,17 @@ fun AppNavigation(
 
         composable(Routes.REGISTRO) {
             RegistroScreen(
+                viewModel = authViewModel,
                 onVolver = {
                     navController.popBackStack()
                 },
                 onNavegarAlLogin = {
                     navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.REGISTRO) { inclusive = true }
+                    }
+                },
+                onNavigateToDashboard = {
+                    navController.navigate(Routes.DASHBOARD) {
                         popUpTo(Routes.REGISTRO) { inclusive = true }
                     }
                 }
@@ -109,7 +121,15 @@ fun AppNavigation(
         }
 
         composable(Routes.PROFILE) {
-            ProfileScreen(onVolver = { navController.popBackStack() })
+            ProfileScreen(
+                viewModel = authViewModel,
+                onVolver = { navController.popBackStack() },
+                onLogout = {
+                    navController.navigate(Routes.SPLASH) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(Routes.DETALLE_PROYECTO) {
