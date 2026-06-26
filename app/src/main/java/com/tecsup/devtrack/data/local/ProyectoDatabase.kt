@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
         ProyectoEntity::class,
         TareaEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class ProyectoDatabase : RoomDatabase() {

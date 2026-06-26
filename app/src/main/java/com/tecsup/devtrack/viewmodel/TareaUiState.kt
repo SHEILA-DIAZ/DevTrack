@@ -10,6 +10,8 @@ data class TareaUiState(
     val nombre: String = "",
     val descripcion: String = "",
     val estado: String = "Pendiente",
+    val prioridad: String = "Baja",
     val proyectoId: Int = 0,
-    val mensajeError: String = ""
+    val mensajeError: String = "",
+    val isEditing: Boolean = false
 )

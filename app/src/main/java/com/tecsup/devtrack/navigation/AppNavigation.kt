@@ -22,10 +22,6 @@ import com.tecsup.devtrack.ui.screens.SplashScreen
 import com.tecsup.devtrack.ui.screens.TareaScreen
 import com.tecsup.devtrack.viewmodel.*
 
-/**
- * Configuración del NavHost para gestionar la navegación entre pantallas.
- * Define cómo se pasan parámetros, como el proyectoId, entre destinos.
- */
 @Composable
 fun AppNavigation(
     factory: ProyectoViewModelFactory,
@@ -46,8 +42,6 @@ fun AppNavigation(
         factory = tareaFactory
     )
 
-    // COMENTARIO PARA SUSTENTACIÓN: Sincronización global del estado del usuario.
-    // Cuando el ID del usuario cambia (Login/Logout), reiniciamos la carga de datos.
     LaunchedEffect(authUiState.userId) {
         val uid = authUiState.userId
         if (uid != null) {
@@ -98,7 +92,6 @@ fun AppNavigation(
                 },
                 onIngresarAlDashboard = {
                     navController.navigate(Routes.DASHBOARD) {
-                        // Limpiamos el historial para que no pueda volver al Login con el botón atrás
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
                 }
@@ -128,12 +121,20 @@ fun AppNavigation(
             DashboardScreen(
                 proyectos = proyectoUiState.proyectos,
                 tareas = tareaUiState.tareas,
+                userName = authUiState.userName ?: authUiState.userEmail?.substringBefore("@") ?: "Usuario",
+                userEmail = authUiState.userEmail ?: "",
                 onNavegar = { ruta ->
                     navController.navigate(ruta)
                 },
                 onAgregarProyecto = {
                     proyectoViewModel.limpiarFormulario()
                     navController.navigate(Routes.PROYECTOS)
+                },
+                onLogout = {
+                    authViewModel.logout()
+                    navController.navigate(Routes.SPLASH) {
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
@@ -141,6 +142,8 @@ fun AppNavigation(
         composable(Routes.PROFILE) {
             ProfileScreen(
                 viewModel = authViewModel,
+                proyectos = proyectoUiState.proyectos,
+                tareas = tareaUiState.tareas,
                 onVolver = { navController.popBackStack() },
                 onLogout = {
                     navController.navigate(Routes.SPLASH) {
@@ -151,7 +154,11 @@ fun AppNavigation(
         }
 
         composable(Routes.DETALLE_PROYECTO) {
-            DetalleProyectoScreen(onVolver = { navController.popBackStack() })
+            DetalleProyectoScreen(
+                viewModel = proyectoViewModel,
+                tareas = tareaUiState.tareas,
+                onVolver = { navController.popBackStack() }
+            )
         }
 
         composable(Routes.RECURSOS) {
@@ -164,6 +171,7 @@ fun AppNavigation(
         }
 
         composable(Routes.PROYECTOS) {
+            android.util.Log.d("DEVTRACK_PROJECTS", "Abriendo ProyectoScreen")
             ProyectoScreen(
                 viewModel = proyectoViewModel,
                 onVolver = {
@@ -173,15 +181,27 @@ fun AppNavigation(
         }
 
         composable(Routes.LISTA_PROYECTOS) {
+            android.util.Log.d("DEVTRACK_PROJECTS", "Abriendo ListaProyectosScreen")
             ListaProyectosScreen(
                 viewModel = proyectoViewModel,
+                tareas = tareaUiState.tareas,
                 onVolver = {
                     navController.popBackStack()
                 },
                 onVerTareas = { proyectoId ->
+                    android.util.Log.d("DEVTRACK_PROJECTS", "Ver tareas del proyecto: $proyectoId")
                     navController.navigate(Routes.tareas(proyectoId))
                 },
                 onEditarProyecto = {
+                    navController.navigate(Routes.PROYECTOS)
+                },
+                onVerDetalle = { proyecto ->
+                    android.util.Log.d("DEVTRACK_PROJECTS", "Proyecto seleccionado: ${proyecto.id}")
+                    proyectoViewModel.seleccionarProyecto(proyecto)
+                    navController.navigate(Routes.DETALLE_PROYECTO)
+                },
+                onAgregarProyecto = {
+                    proyectoViewModel.limpiarFormulario()
                     navController.navigate(Routes.PROYECTOS)
                 }
             )
@@ -200,9 +220,12 @@ fun AppNavigation(
 
             TareaScreen(
                 viewModel = tareaViewModel,
+                proyectos = proyectoUiState.proyectos,
                 proyectoId = proyectoId,
                 onVolver = {
-                    navController.popBackStack()
+                    navController.navigate(Routes.DASHBOARD) {
+                        popUpTo(Routes.DASHBOARD) { inclusive = true }
+                    }
                 }
             )
         }

@@ -37,6 +37,7 @@ fun LoginScreen(
     onIngresarAlDashboard: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.clearMessages()
@@ -184,7 +185,9 @@ fun LoginScreen(
                     Text(text = "Recordarme", style = MaterialTheme.typography.bodySmall.copy(color = Color.Gray))
                 }
                 
-                TextButton(onClick = { /* Toast o placeholder logic */ }) {
+                TextButton(onClick = { 
+                    android.widget.Toast.makeText(context, "Disponible en una próxima versión.", android.widget.Toast.LENGTH_SHORT).show()
+                }) {
                     Text(
                         text = "¿Olvidaste tu contraseña?",
                         style = MaterialTheme.typography.bodySmall.copy(
@@ -201,8 +204,22 @@ fun LoginScreen(
             Button(
                 onClick = {
                     var esValido = true
-                    if (correo.isBlank()) { correoError = "El correo no puede estar vacío"; esValido = false }
-                    if (password.length < 6) { passwordError = "Mínimo 6 caracteres"; esValido = false }
+                    
+                    // Validación de Correo con Regex Flexible
+                    val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$"
+                    if (correo.isBlank()) {
+                        correoError = "Ingresa tu correo electrónico."
+                        esValido = false
+                    } else if (!correo.matches(emailPattern.toRegex())) {
+                        correoError = "Ingresa un correo electrónico válido."
+                        esValido = false
+                    }
+
+                    // Validación de Contraseña
+                    if (password.isBlank()) {
+                        passwordError = "Ingresa tu contraseña."
+                        esValido = false
+                    }
 
                     if (esValido) {
                         viewModel.login(correo, password)

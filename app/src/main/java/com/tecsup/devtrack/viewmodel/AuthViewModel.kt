@@ -24,12 +24,16 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private fun checkSession() {
         val currentUser = authRepository.getCurrentUser()
         if (currentUser != null) {
-            _uiState.update {
-                it.copy(
-                    isAuthenticated = true,
-                    userEmail = currentUser.email,
-                    userId = currentUser.uid
-                )
+            viewModelScope.launch {
+                val profile = authRepository.getUserProfile(currentUser.uid)
+                _uiState.update {
+                    it.copy(
+                        isAuthenticated = true,
+                        userEmail = currentUser.email,
+                        userName = profile?.get("nombreCompleto") as? String,
+                        userId = currentUser.uid
+                    )
+                }
             }
         }
     }
@@ -40,40 +44,59 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             try {
                 val user = authRepository.login(email, password)
                 if (user != null) {
+                    val profile = authRepository.getUserProfile(user.uid)
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             isAuthenticated = true,
                             userEmail = user.email,
+                            userName = profile?.get("nombreCompleto") as? String,
                             userId = user.uid
                         )
                     }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.localizedMessage) }
+                _uiState.update { it.copy(isLoading = false, errorMessage = mapFirebaseError(e)) }
             }
         }
     }
 
-    fun register(email: String, password: String) {
+    fun register(nombre: String, email: String, password: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null, successMessage = null) }
             try {
-                val user = authRepository.register(email, password)
+                val user = authRepository.register(nombre, email, password)
                 if (user != null) {
+                    // COMENTARIO PARA SUSTENTACIÓN: Se cierra la sesión automática para obligar al login manual
+                    authRepository.logout()
+                    
                     _uiState.update {
                         it.copy(
                             isLoading = false,
-                            isAuthenticated = true, // Podría requerir login después, pero solemos loguear al registrar
-                            userEmail = user.email,
-                            userId = user.uid,
-                            successMessage = "Cuenta creada correctamente"
+                            isAuthenticated = false,
+                            userEmail = null,
+                            userName = null,
+                            userId = null,
+                            successMessage = "Cuenta creada correctamente. Por favor, inicia sesión."
                         )
                     }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.localizedMessage) }
+                _uiState.update { it.copy(isLoading = false, errorMessage = mapFirebaseError(e)) }
             }
+        }
+    }
+
+    private fun mapFirebaseError(e: Exception): String {
+        val message = e.message ?: ""
+        return when {
+            message.contains("network-request-failed") -> "No se pudo conectar. Verifica tu conexión a Internet."
+            message.contains("user-not-found") -> "No existe una cuenta registrada con este correo."
+            message.contains("wrong-password") -> "La contraseña ingresada es incorrecta."
+            message.contains("invalid-credential") -> "Correo o contraseña incorrectos."
+            message.contains("email-already-in-use") -> "Este correo ya está registrado."
+            message.contains("invalid-email") -> "Ingresa un correo electrónico válido."
+            else -> "Ocurrió un error. Inténtalo nuevamente."
         }
     }
 
@@ -83,6 +106,7 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
             it.copy(
                 isAuthenticated = false,
                 userEmail = null,
+                userName = null,
                 userId = null,
                 successMessage = null
             )

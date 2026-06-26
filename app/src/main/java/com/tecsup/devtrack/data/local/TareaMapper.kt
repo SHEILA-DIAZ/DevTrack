@@ -12,7 +12,8 @@ fun TareaEntity.toTarea(): Tarea {
         proyectoId = proyectoId,
         nombre = nombre,
         descripcion = descripcion,
-        estado = estado
+        estado = estado,
+        prioridad = prioridad
     )
 }
 
@@ -23,6 +24,7 @@ fun Tarea.toEntity(): TareaEntity {
         proyectoId = proyectoId,
         nombre = nombre,
         descripcion = descripcion,
-        estado = estado
+        estado = estado,
+        prioridad = prioridad
     )
 }

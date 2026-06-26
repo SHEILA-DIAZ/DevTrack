@@ -9,5 +9,6 @@ data class Tarea(
     val proyectoId: Int,
     val nombre: String,
     val descripcion: String,
-    val estado: String
+    val estado: String,
+    val prioridad: String = "Baja"
 )

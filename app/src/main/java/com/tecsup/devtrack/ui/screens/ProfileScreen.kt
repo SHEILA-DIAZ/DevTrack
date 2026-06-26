@@ -2,6 +2,7 @@ package com.tecsup.devtrack.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -24,156 +25,142 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
+import com.tecsup.devtrack.model.Proyecto
+import com.tecsup.devtrack.model.Tarea
 import com.tecsup.devtrack.viewmodel.AuthViewModel
 
-/**
- * Pantalla de perfil de usuario para DevTrack rediseñada con estilo SaaS Premium.
- * COMENTARIO PARA SUSTENTACIÓN: Utiliza una arquitectura visual de capas con gradientes
- * y tarjetas de métricas para ofrecer una experiencia de usuario profesional y moderna.
- */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     viewModel: AuthViewModel,
+    proyectos: List<Proyecto>,
+    tareas: List<Tarea>,
     onVolver: () -> Unit,
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val gradientBrush = Brush.verticalGradient(
-        colors = listOf(Color(0xFF2D3E9F), Color(0xFF4B6CB7))
-    )
+    val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF8F9FA))
-            .verticalScroll(rememberScrollState())
-    ) {
-        // COMENTARIO PARA SUSTENTACIÓN: Encabezado con gradiente y perfil de usuario.
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(260.dp)
-                .background(gradientBrush)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .statusBarsPadding()
-                    .padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                // Avatar DT Moderno
-                Surface(
-                    modifier = Modifier
-                        .size(90.dp)
-                        .border(3.dp, Color.White.copy(alpha = 0.4f), CircleShape),
-                    shape = CircleShape,
-                    color = Color.White.copy(alpha = 0.2f)
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "DT",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Black,
-                            color = Color.White
-                        )
+    val devTrackBlue = Color(0xFF4B6CB7)
+    val devTrackDark = Color(0xFF0D1B3E)
+    val lightGray = Color(0xFFF1F4F9)
+
+    val displayName = uiState.userName ?: "Usuario DevTrack"
+    val initials = if(displayName.isNotBlank()) {
+        displayName.split(" ").filter { it.isNotBlank() }.map { it.first().uppercase() }.take(2).joinToString("")
+    } else "DT"
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Mi Perfil", fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                navigationIcon = {
+                    IconButton(onClick = onVolver) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menú", tint = devTrackBlue)
                     }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text(
-                    text = uiState.userEmail ?: "Usuario DevTrack",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-                Text(
-                    text = "ID: ${uiState.userId ?: "N/A"}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.8f)
-                )
-            }
+                },
+                actions = {
+                    // Eliminado el icono de editar según requerimiento
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
+            )
         }
-
+    ) { padding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(lightGray)
+                .padding(padding)
+                .verticalScroll(scrollState)
                 .padding(horizontal = 20.dp)
-                .offset(y = (-30).dp) // Efecto de solapamiento premium
         ) {
-            // Sección de Estadísticas Personales
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Tarjeta Azul Principal
             Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = devTrackDark)
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(20.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    StatItem("Proyectos", "12")
-                    VerticalDivider(modifier = Modifier.height(40.dp), thickness = 1.dp, color = Color(0xFFF1F3F4))
-                    StatItem("Tareas", "45")
-                    VerticalDivider(modifier = Modifier.height(40.dp), thickness = 1.dp, color = Color(0xFFF1F3F4))
-                    StatItem("Progreso", "85%")
+                Box(modifier = Modifier.fillMaxSize()) {
+                    // Decoración de fondo
+                    Surface(
+                        modifier = Modifier.size(150.dp).offset(x = 180.dp, y = (-20).dp),
+                        shape = CircleShape,
+                        color = Color.White.copy(alpha = 0.05f)
+                    ) {}
+
+                    Column(
+                        modifier = Modifier.fillMaxSize().padding(24.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(contentAlignment = Alignment.BottomEnd) {
+                                Surface(
+                                    modifier = Modifier.size(80.dp),
+                                    shape = CircleShape,
+                                    color = Color.White.copy(alpha = 0.1f),
+                                    border = androidx.compose.foundation.BorderStroke(2.dp, Color.White.copy(alpha = 0.3f))
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(initials, color = Color.White, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                                Surface(
+                                    modifier = Modifier.size(22.dp).offset(x = (-2).dp, y = (-2).dp),
+                                    shape = CircleShape,
+                                    color = Color(0xFF2E7D32),
+                                    border = androidx.compose.foundation.BorderStroke(2.dp, devTrackDark)
+                                ) {}
+                            }
+                            Spacer(modifier = Modifier.width(20.dp))
+                            Column {
+                                Text(displayName, color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                                Text(uiState.userEmail ?: "", color = Color.White.copy(alpha = 0.6f), fontSize = 13.sp)
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(24.dp))
+                        
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            ProfileStatItem(proyectos.size.toString(), "Proyectos", Modifier.weight(1f))
+                            ProfileStatItem(tareas.size.toString(), "Tareas", Modifier.weight(1f))
+                        }
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Tarjeta Principal de Información
-            SectionHeader("Información del Perfil")
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    ProfileDetailItem(Icons.Default.AccountBox, "Rol", "Desarrollador Senior")
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 0.5.dp, color = Color(0xFFF1F3F4))
-                    ProfileDetailItem(Icons.Default.Build, "Proyectos", "Gestión activa en DevTrack")
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 0.5.dp, color = Color(0xFFF1F3F4))
-                    ProfileDetailItem(Icons.Default.CheckCircle, "Tareas", "Seguimiento de hitos")
-                }
-            }
+            Text("Actividad reciente", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = devTrackDark)
+            Spacer(modifier = Modifier.height(16.dp))
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Resumen de Actividad (Tarjetas Visuales)
-            SectionHeader("Áreas de Enfoque")
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                FocusCard(Icons.Default.DateRange, "Organización", Modifier.weight(1f))
-                FocusCard(Icons.Default.Star, "Productividad", Modifier.weight(1f))
-                FocusCard(Icons.Default.Info, "Tecnología", Modifier.weight(1f))
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Tarjeta DevTrack
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF4B6CB7).copy(alpha = 0.05f))
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+            // Lista de Actividad con datos reales
+            if (proyectos.isEmpty()) {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White)
                 ) {
-                    Icon(Icons.Default.Info, contentDescription = null, tint = Color(0xFF4B6CB7))
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column {
-                        Text("DevTrack v1.0", fontWeight = FontWeight.Bold, color = Color(0xFF4B6CB7))
-                        Text("Gestión inteligente de proyectos tecnológicos", style = MaterialTheme.typography.bodySmall, color = Color.Gray)
+                    Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Default.Info, contentDescription = null, tint = Color.LightGray, modifier = Modifier.size(48.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Aún no hay actividad reciente.", fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                        Text("Crea tu primer proyecto para comenzar a registrar avances.", fontSize = 12.sp, color = Color.Gray, textAlign = TextAlign.Center)
+                    }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    proyectos.take(3).forEach { proyecto ->
+                        ActivityItem(
+                            icon = Icons.Default.Add, 
+                            action = "Creaste", 
+                            target = proyecto.nombre, 
+                            time = "Estado: ${proyecto.estado}", 
+                            color = devTrackBlue
+                        )
                     }
                 }
             }
@@ -181,98 +168,82 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             // Botón Cerrar Sesión
-            OutlinedButton(
-                onClick = {
-                    viewModel.logout()
-                    onLogout()
-                },
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(56.dp)
+                    .clickable { 
+                        viewModel.logout()
+                        onLogout()
+                    },
                 shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.5.dp, Color(0xFFD32F2F)),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFD32F2F))
+                color = Color(0xFFFFEBEE)
             ) {
-                Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Cerrar sesión", fontWeight = FontWeight.Bold)
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null, tint = Color(0xFFD32F2F))
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text("Cerrar sesión", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Botón Volver Premium
-            Button(
-                onClick = onVolver,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4B6CB7)),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
-            ) {
-                Text("Volver al Dashboard", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            }
-            
             Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }
 
 @Composable
-fun StatItem(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Black, color = Color(0xFF1A1C1E))
-        Text(text = label, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-    }
-}
-
-@Composable
-fun SectionHeader(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleSmall,
-        fontWeight = FontWeight.Bold,
-        color = Color(0xFF1A1C1E),
-        modifier = Modifier.padding(bottom = 12.dp, start = 4.dp)
-    )
-}
-
-@Composable
-fun ProfileDetailItem(icon: ImageVector, label: String, value: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Surface(
-            modifier = Modifier.size(36.dp),
-            shape = RoundedCornerShape(10.dp),
-            color = Color(0xFF4B6CB7).copy(alpha = 0.1f)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = null, tint = Color(0xFF4B6CB7), modifier = Modifier.size(20.dp))
-            }
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(text = label, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
-            Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-        }
-    }
-}
-
-@Composable
-fun FocusCard(icon: ImageVector, title: String, modifier: Modifier) {
-    Card(
+fun ProfileStatItem(value: String, label: String, modifier: Modifier) {
+    Surface(
         modifier = modifier,
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFFF1F3F4))
+        color = Color.White.copy(alpha = 0.08f)
     ) {
-        Column(
-            modifier = Modifier.padding(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Column(modifier = Modifier.padding(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                if(label == "Proyectos") Icons.Default.Info else Icons.Default.CheckCircle,
+                contentDescription = null,
+                tint = if(label == "Proyectos") Color(0xFF4B6CB7) else Color(0xFF3F51B5),
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(value, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+            Text(label, color = Color.White.copy(alpha = 0.5f), fontSize = 11.sp)
+        }
+    }
+}
+
+@Composable
+fun ActivityItem(icon: ImageVector, action: String, target: String, time: String, color: Color) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = null, tint = Color(0xFF4B6CB7), modifier = Modifier.size(24.dp))
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = title, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+            Surface(
+                modifier = Modifier.size(36.dp),
+                shape = CircleShape,
+                color = color.copy(alpha = 0.1f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(18.dp))
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(action, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(" - $target", fontSize = 13.sp, color = Color.Gray)
+                }
+                Text(time, fontSize = 12.sp, color = Color.LightGray)
+            }
         }
     }
 }

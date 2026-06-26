@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecsup.devtrack.viewmodel.AuthViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,6 +45,14 @@ fun RegistroScreen(
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) {
             onNavigateToDashboard()
+        }
+    }
+
+    LaunchedEffect(uiState.successMessage) {
+        if (uiState.successMessage != null) {
+            // Espera breve para que el usuario lea el mensaje de éxito antes de redirigir
+            delay(2000)
+            onNavegarAlLogin()
         }
     }
 
@@ -197,28 +206,60 @@ fun RegistroScreen(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Botón Registrarse
-            Button(
-                onClick = {
-                    var esValido = true
-                    if (nombre.length < 3) { nombreError = "El nombre debe tener mínimo 3 caracteres"; esValido = false }
-                    val emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+"
-                    if (!correo.matches(emailPattern.toRegex())) { correoError = "Ingrese un correo válido"; esValido = false }
-                    if (password.length < 8) { passwordError = "La contraseña debe tener mínimo 8 caracteres"; esValido = false }
-                    if (password != confirmPassword) { confirmPasswordError = "Las contraseñas no coinciden"; esValido = false }
+                    // Botón Registrarse
+                    Button(
+                        onClick = {
+                            var esValido = true
+                            
+                            // Validación de Nombre
+                            if (nombre.isBlank()) {
+                                nombreError = "Ingresa tu nombre completo."
+                                esValido = false
+                            } else if (nombre.length < 3) {
+                                nombreError = "El nombre debe tener al menos 3 caracteres."
+                                esValido = false
+                            }
 
-                    if (esValido) { 
-                        viewModel.register(correo, password)
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(primaryGradient),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                enabled = !uiState.isLoading
-            ) {
+                            // Validación de Correo con Regex Flexible
+                            val emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\$"
+                            if (correo.isBlank()) {
+                                correoError = "Ingresa tu correo electrónico."
+                                esValido = false
+                            } else if (!correo.matches(emailPattern.toRegex())) {
+                                correoError = "Ingresa un correo electrónico válido."
+                                esValido = false
+                            }
+
+                            // Validación de Contraseña
+                            if (password.isBlank()) {
+                                passwordError = "Ingresa una contraseña."
+                                esValido = false
+                            } else if (password.length < 8) {
+                                passwordError = "La contraseña debe tener al menos 8 caracteres."
+                                esValido = false
+                            }
+
+                            // Validación de Confirmación
+                            if (confirmPassword.isBlank()) {
+                                confirmPasswordError = "Confirma tu contraseña."
+                                esValido = false
+                            } else if (password != confirmPassword) {
+                                confirmPasswordError = "Las contraseñas no coinciden."
+                                esValido = false
+                            }
+
+                            if (esValido) { 
+                                viewModel.register(nombre, correo, password)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(primaryGradient),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                        enabled = !uiState.isLoading
+                    ) {
                 if (uiState.isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
                 } else {

@@ -20,5 +20,7 @@ data class TareaEntity(
 
     val descripcion: String,
 
-    val estado: String
+    val estado: String,
+
+    val prioridad: String = "Baja"
 )

@@ -107,6 +107,21 @@ class ProyectoViewModel(
             return
         }
 
+        // Validación de Fechas
+        try {
+            val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+            sdf.isLenient = false
+            val inicio = sdf.parse(estadoActual.fechaInicio)
+            val limite = sdf.parse(estadoActual.fechaLimite)
+            if (limite != null && inicio != null && limite.before(inicio)) {
+                _uiState.update { it.copy(mensajeError = "La fecha límite no puede ser anterior a la fecha de inicio.") }
+                return
+            }
+        } catch (e: Exception) {
+            _uiState.update { it.copy(mensajeError = "Ingresa una fecha válida con formato dd/MM/yyyy.") }
+            return
+        }
+
         viewModelScope.launch {
             if (proyectoEditando != null) {
                 actualizarProyecto()

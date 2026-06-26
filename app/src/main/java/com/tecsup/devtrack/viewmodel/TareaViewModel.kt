@@ -90,11 +90,15 @@ class TareaViewModel(
         _uiState.update { it.copy(estado = estado) }
     }
 
+    fun actualizarPrioridad(prioridad: String) {
+        _uiState.update { it.copy(prioridad = prioridad) }
+    }
+
     fun guardarTarea() {
         val estadoActual = _uiState.value
 
-        if (estadoActual.nombre.isBlank() || estadoActual.descripcion.isBlank()) {
-            _uiState.update { it.copy(mensajeError = "Complete todos los campos") }
+        if (estadoActual.nombre.isBlank()) {
+            _uiState.update { it.copy(mensajeError = "Ingrese el nombre de la tarea") }
             return
         }
 
@@ -108,7 +112,8 @@ class TareaViewModel(
                 proyectoId = estadoActual.proyectoId,
                 nombre = estadoActual.nombre,
                 descripcion = estadoActual.descripcion,
-                estado = estadoActual.estado
+                estado = estadoActual.estado,
+                prioridad = estadoActual.prioridad
             )
 
             repository.guardarTarea(nuevaTarea)
@@ -123,7 +128,9 @@ class TareaViewModel(
                 nombre = tarea.nombre,
                 descripcion = tarea.descripcion,
                 estado = tarea.estado,
-                mensajeError = ""
+                prioridad = tarea.prioridad,
+                mensajeError = "",
+                isEditing = true
             )
         }
     }
@@ -135,7 +142,8 @@ class TareaViewModel(
         val tareaActualizada = tarea.copy(
             nombre = estadoActual.nombre,
             descripcion = estadoActual.descripcion,
-            estado = estadoActual.estado
+            estado = estadoActual.estado,
+            prioridad = estadoActual.prioridad
         )
 
         repository.actualizarTarea(tareaActualizada)
@@ -155,7 +163,9 @@ class TareaViewModel(
                 nombre = "",
                 descripcion = "",
                 estado = "Pendiente",
-                mensajeError = ""
+                prioridad = "Baja",
+                mensajeError = "",
+                isEditing = false
             )
         }
     }
